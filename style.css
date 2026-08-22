@@ -1,0 +1,643 @@
+* {
+    box-sizing: border-box;
+}
+
+
+html,
+body {
+
+    margin: 0;
+
+    width: 100%;
+    height: 100%;
+
+    overflow: hidden;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    background: #15171a;
+
+    color: #eeeeee;
+}
+
+
+/* =====================================================
+   TOPBAR
+===================================================== */
+
+.topbar {
+
+    position: fixed;
+
+    left: 0;
+    right: 0;
+    top: 0;
+
+    height: 74px;
+
+    z-index: 1000;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 25px;
+
+    padding: 10px 18px;
+
+    background: #24272d;
+
+    border-bottom:
+        1px solid #3b3f46;
+}
+
+
+.title {
+
+    min-width: 220px;
+
+}
+
+
+.title h1 {
+
+    margin: 0;
+
+    font-size: 20px;
+
+}
+
+
+.title span {
+
+    color: #92969e;
+
+    font-size: 12px;
+
+}
+
+
+.toolbar {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    flex-wrap: wrap;
+
+}
+
+
+button {
+
+    padding:
+        8px 11px;
+
+    border:
+        1px solid #4b5059;
+
+    border-radius: 5px;
+
+    background: #30343b;
+
+    color: #eeeeee;
+
+    cursor: pointer;
+
+    font-size: 13px;
+
+}
+
+
+button:hover {
+
+    background: #3b4048;
+
+}
+
+
+button:active {
+
+    transform:
+        translateY(1px);
+
+}
+
+
+button.danger {
+
+    background: #522e2e;
+
+    border-color:
+        #754040;
+
+}
+
+
+button.danger:hover {
+
+    background: #673838;
+
+}
+
+
+/* =====================================================
+   SIDEBAR
+===================================================== */
+
+.sidebar {
+
+    position: fixed;
+
+    left: 0;
+    top: 74px;
+    bottom: 0;
+
+    width: 240px;
+
+    z-index: 500;
+
+    padding: 15px;
+
+    overflow-y: auto;
+
+    background: #22252a;
+
+    border-right:
+        1px solid #3a3e45;
+
+}
+
+
+.sidebar h2 {
+
+    margin:
+        0 0 8px;
+
+    font-size: 14px;
+
+    color: #d0d3d8;
+
+}
+
+
+.info-box {
+
+    min-height: 42px;
+
+    margin-bottom: 18px;
+
+    padding: 10px;
+
+    background: #17191d;
+
+    border:
+        1px solid #383c43;
+
+    border-radius: 5px;
+
+    color: #b8bcc3;
+
+    font-size: 13px;
+
+    line-height: 1.5;
+
+}
+
+
+.instructions {
+
+    margin-top: 25px;
+
+}
+
+
+.instructions p {
+
+    margin:
+        0 0 14px;
+
+    color: #a8acb4;
+
+    font-size: 12px;
+
+    line-height: 1.45;
+
+}
+
+
+/* =====================================================
+   WORKSPACE
+===================================================== */
+
+.workspace {
+
+    position: fixed;
+
+    left: 240px;
+    right: 0;
+
+    top: 74px;
+    bottom: 0;
+
+    overflow: hidden;
+
+    cursor: grab;
+
+    background-color: #15171a;
+
+    background-image:
+
+        linear-gradient(
+            rgba(255,255,255,0.035) 1px,
+            transparent 1px
+        ),
+
+        linear-gradient(
+            90deg,
+            rgba(255,255,255,0.035) 1px,
+            transparent 1px
+        );
+
+    background-size:
+        25px 25px;
+
+}
+
+
+.workspace.panning {
+
+    cursor: grabbing;
+
+}
+
+
+/* =====================================================
+   CANVAS
+===================================================== */
+
+.canvas {
+
+    position: absolute;
+
+    left: 0;
+    top: 0;
+
+    width: 6000px;
+    height: 6000px;
+
+    transform-origin:
+        0 0;
+
+}
+
+
+/* =====================================================
+   SVG
+===================================================== */
+
+.connections {
+
+    position: absolute;
+
+    left: 0;
+    top: 0;
+
+    width: 6000px;
+    height: 6000px;
+
+    overflow: visible;
+
+    pointer-events: none;
+
+    z-index: 1;
+
+}
+
+
+.connection {
+
+    stroke: #eeeeee;
+
+    stroke-width: 2;
+
+    fill: none;
+
+}
+
+
+.branch-line {
+
+    stroke: #eeeeee;
+
+    stroke-width: 2;
+
+    fill: none;
+
+}
+
+
+.parallel-line {
+
+    stroke: #eeeeee;
+
+    stroke-width: 2;
+
+    fill: none;
+
+}
+
+
+.reconnect-line {
+
+    stroke: #eeeeee;
+
+    stroke-width: 2;
+
+    fill: none;
+
+}
+
+
+/* =====================================================
+   OBJEKT
+===================================================== */
+
+.sequence-object {
+
+    position: absolute;
+
+    z-index: 10;
+
+    user-select: none;
+
+    cursor: grab;
+
+}
+
+
+.sequence-object.dragging {
+
+    cursor: grabbing;
+
+    opacity: 0.85;
+
+}
+
+
+.sequence-object.selected {
+
+    filter:
+        drop-shadow(
+            0 0 5px rgba(80,160,255,0.9)
+        );
+
+}
+
+
+.sequence-object.build-point {
+
+    filter:
+        drop-shadow(
+            0 0 9px rgba(80,200,120,1)
+        );
+
+}
+
+
+.sequence-object.reconnect-target {
+
+    animation:
+        reconnectPulse
+        1s
+        infinite;
+
+}
+
+
+@keyframes reconnectPulse {
+
+    0% {
+
+        filter:
+            drop-shadow(
+                0 0 3px rgba(80,170,255,0.5)
+            );
+
+    }
+
+    50% {
+
+        filter:
+            drop-shadow(
+                0 0 12px rgba(80,170,255,1)
+            );
+
+    }
+
+    100% {
+
+        filter:
+            drop-shadow(
+                0 0 3px rgba(80,170,255,0.5)
+            );
+
+    }
+
+}
+
+
+/* =====================================================
+   HÄNDELSE
+===================================================== */
+
+.step {
+
+    width: 240px;
+
+    height: 66px;
+
+    display: flex;
+
+    background: #292d33;
+
+    border:
+        2px solid #eeeeee;
+
+    border-radius: 2px;
+
+    overflow: hidden;
+
+}
+
+
+.step.start {
+
+    border-color:
+        #78c878;
+
+}
+
+
+.step-memory {
+
+    width: 65px;
+
+    flex-shrink: 0;
+
+    border: none;
+
+    border-right:
+        2px solid #eeeeee;
+
+    outline: none;
+
+    background: #1f2227;
+
+    color: white;
+
+    text-align: center;
+
+    font-weight: bold;
+
+    font-size: 14px;
+
+}
+
+
+.step-event {
+
+    flex: 1;
+
+    padding: 10px;
+
+    outline: none;
+
+    color: #eeeeee;
+
+    font-size: 14px;
+
+    line-height: 1.3;
+
+    overflow-wrap: break-word;
+
+    cursor: text;
+
+}
+
+
+.step-event:focus {
+
+    background: #30353d;
+
+}
+
+
+/* =====================================================
+   ÖVERGÅNG
+===================================================== */
+
+.transition {
+
+    width: 220px;
+
+    height: 46px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background: #292d33;
+
+    border:
+        2px solid #eeeeee;
+
+    border-radius: 2px;
+
+}
+
+
+.transition-input {
+
+    width: 100%;
+    height: 100%;
+
+    border: none;
+
+    outline: none;
+
+    background: transparent;
+
+    color: #eeeeee;
+
+    text-align: center;
+
+    padding: 5px;
+
+    font-size: 13px;
+
+}
+
+
+.transition-input:focus {
+
+    background: #30353d;
+
+}
+
+
+/* =====================================================
+   TOM
+===================================================== */
+
+.empty-message {
+
+    position: absolute;
+
+    left: 650px;
+    top: 70px;
+
+    color: #686d75;
+
+    font-size: 14px;
+
+    pointer-events: none;
+
+}
+
+
+/* =====================================================
+   ZOOM
+===================================================== */
+
+.zoom-display {
+
+    position: fixed;
+
+    right: 15px;
+    bottom: 15px;
+
+    z-index: 1000;
+
+    padding:
+        7px 11px;
+
+    background: #24272d;
+
+    border:
+        1px solid #3a3e46;
+
+    border-radius: 5px;
+
+    color: #aeb2b9;
+
+    font-size: 12px;
+
+}

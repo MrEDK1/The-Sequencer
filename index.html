@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sekvensprogrammering</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header class="topbar">
+
+    <div class="title">
+        <h1>Sekvensprogrammering</h1>
+        <span>Sekvensmall / SFC</span>
+    </div>
+
+    <div class="toolbar">
+
+        <button id="btnStart">+ Start</button>
+        <button id="btnStep">+ Händelse</button>
+        <button id="btnTransition">+ Övergång</button>
+
+        <button id="btnAlternative">
+            Alternativgren
+        </button>
+
+        <button id="btnParallel">
+            Parallellgren
+        </button>
+
+        <button id="btnReconnect">
+            Koppla gren
+        </button>
+
+        <button id="btnLoop">
+            ↩ Loop till start
+        </button>
+
+        <button id="btnSave">
+            Spara
+        </button>
+
+        <button id="btnLoad">
+            Ladda
+        </button>
+
+        <button id="btnClear" class="danger">
+            Rensa
+        </button>
+
+        <input
+            type="file"
+            id="fileInput"
+            accept=".json"
+            hidden
+        >
+
+    </div>
+
+</header>
+
+
+<aside class="sidebar">
+
+    <h2>Byggpunkt</h2>
+
+    <div id="buildPoint" class="info-box">
+        Ingen vald
+    </div>
+
+
+    <h2>Markerat</h2>
+
+    <div id="selectedInfo" class="info-box">
+        Inget objekt valt.
+    </div>
+
+
+    <h2>Gren</h2>
+
+    <div id="branchInfo" class="info-box">
+        Ingen gren
+    </div>
+
+
+    <div class="instructions">
+
+        <h2>Kontroller</h2>
+
+        <p>
+            <b>Dubbelklick</b><br>
+            Markera byggpunkt eller kopplingsmål.
+        </p>
+
+        <p>
+            <b>Vänsterklick + dra</b><br>
+            Flytta objekt.
+        </p>
+
+        <p>
+            <b>Vänsterklick + dra på tom yta</b><br>
+            Flytta arbetsytan.
+        </p>
+
+        <p>
+            <b>Ctrl + mushjul</b><br>
+            Zooma in/ut.
+        </p>
+
+        <p>
+            <b>Delete</b><br>
+            Ta bort markerat objekt.
+        </p>
+
+        <p>
+            <b>Esc</b><br>
+            Avbryt kopplingsläge.
+        </p>
+
+    </div>
+
+</aside>
+
+
+<main id="workspace" class="workspace">
+
+    <div id="canvas" class="canvas">
+
+        <svg
+            id="connections"
+            class="connections"
+        ></svg>
+
+        <div
+            id="emptyMessage"
+            class="empty-message"
+        >
+            Börja med att lägga till ett startsteg.
+        </div>
+
+    </div>
+
+</main>
+
+
+<div class="zoom-display">
+    Zoom:
+    <span id="zoomValue">100%</span>
+</div>
+
+
+<script src="script.js"></script>
+
+</body>
+</html>
