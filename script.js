@@ -60,6 +60,13 @@ const RECONNECT_MARGIN = 80;
 const RECONNECT_SPACING = 55;
 
 
+/*
+   Minsta höjd på en händelseruta.
+   Rutorna får sedan växa beroende på texten.
+*/
+const MIN_STEP_HEIGHT = 66;
+
+
 /* =====================================================
    DATA
 ===================================================== */
@@ -329,7 +336,7 @@ function createStep(
             STEP_WIDTH,
 
         height:
-            STEP_HEIGHT,
+            MIN_STEP_HEIGHT,
 
         memory:
             type === START
@@ -1042,6 +1049,23 @@ function renderObject(object) {
     );
 
 
+    /*
+       Uppdatera höjden efter att
+       texten faktiskt har renderats.
+    */
+    if (
+        object.type === STEP ||
+        object.type === START
+    ) {
+
+        updateStepHeight(
+            object,
+            element
+        );
+
+    }
+
+
     element.addEventListener(
         "mousedown",
         function(event) {
@@ -1102,16 +1126,69 @@ function renderObject(object) {
             }
 
 
-            /*
-               Alla objekt kan markeras.
-            */
-
             selectBuildPoint(
                 object.id
             );
 
         }
     );
+
+}
+
+
+/* =====================================================
+   UPPDATERA HÄNDELSERUTANS HÖJD
+===================================================== */
+
+function updateStepHeight(
+    object,
+    element
+) {
+
+    const eventElement =
+        element.querySelector(
+            ".step-event"
+        );
+
+
+    if (!eventElement) {
+        return;
+    }
+
+
+    /*
+       Tillfälligt låter vi innehållet
+       bestämma hur hög rutan behöver vara.
+    */
+
+    element.style.height =
+        "auto";
+
+
+    eventElement.style.height =
+        "auto";
+
+
+    const requiredHeight =
+        Math.max(
+            MIN_STEP_HEIGHT,
+            eventElement.scrollHeight + 20
+        );
+
+
+    object.height =
+        requiredHeight;
+
+
+    element.style.height =
+        requiredHeight + "px";
+
+
+    eventElement.style.height =
+        "auto";
+
+
+    renderConnections();
 
 }
 
@@ -1203,6 +1280,11 @@ function renderStep(
 
             object.event =
                 event.innerText;
+
+            updateStepHeight(
+                object,
+                element
+            );
 
             updateUI();
 
@@ -2452,11 +2534,6 @@ document.addEventListener(
         }
 
 
-        /*
-           Backspace ska fungera normalt
-           när användaren skriver.
-        */
-
         if (
             event.target.tagName === "INPUT" ||
             event.target.isContentEditable ||
@@ -2465,11 +2542,6 @@ document.addEventListener(
             return;
         }
 
-
-        /*
-           Om inget objekt är markerat
-           gör vi ingenting.
-        */
 
         if (
             !selectedObjectId
@@ -2504,11 +2576,6 @@ function deleteObject(id) {
     }
 
 
-    /*
-       Försök hitta objektet som låg
-       direkt före det som raderas.
-    */
-
     let previousObject =
         null;
 
@@ -2532,11 +2599,6 @@ function deleteObject(id) {
 
     }
 
-
-    /*
-       Om objektet ligger i en gren,
-       hitta föregående objekt i samma gren.
-    */
 
     if (
         !previousObject &&
@@ -2582,11 +2644,6 @@ function deleteObject(id) {
     }
 
 
-    /*
-       Ta bort alla kopplingar
-       till/från objektet.
-    */
-
     connections =
         connections.filter(
             connection =>
@@ -2595,10 +2652,6 @@ function deleteObject(id) {
         );
 
 
-    /*
-       Ta bort loopar som använder objektet.
-    */
-
     loops =
         loops.filter(
             loop =>
@@ -2606,10 +2659,6 @@ function deleteObject(id) {
                 loop.to !== id
         );
 
-
-    /*
-       Uppdatera gren.
-    */
 
     if (
         objectToDelete.branchId
@@ -2649,10 +2698,6 @@ function deleteObject(id) {
     }
 
 
-    /*
-       Ta bort objektet.
-    */
-
     objects =
         objects.filter(
             object =>
@@ -2670,11 +2715,6 @@ function deleteObject(id) {
         element.remove();
     }
 
-
-    /*
-       Efter radering:
-       markera föregående objekt automatiskt.
-    */
 
     if (
         previousObject &&
@@ -2694,11 +2734,6 @@ function deleteObject(id) {
     }
 
     else {
-
-        /*
-           Om inget föregående objekt finns
-           försöker vi välja ett annat objekt.
-        */
 
         if (
             objects.length > 0
@@ -2739,10 +2774,6 @@ function deleteObject(id) {
 
     }
 
-
-    /*
-       Avbryt återkoppling.
-    */
 
     reconnectBranchId =
         null;
@@ -2821,7 +2852,7 @@ btnSave.addEventListener(
         const project = {
 
             version:
-                13,
+                14,
 
             objects,
 
@@ -3052,12 +3083,25 @@ function loadProject(project) {
             }
 
 
-            if (!object.height) {
+            if (
+                object.type === STEP ||
+                object.type === START
+            ) {
+
+                /*
+                   Gamla projekt som sparats med
+                   fast höjd får sin nya höjd
+                   automatiskt efter texten.
+                */
+                object.height =
+                    MIN_STEP_HEIGHT;
+
+            }
+
+            else if (!object.height) {
 
                 object.height =
-                    object.type === TRANSITION
-                        ? TRANSITION_HEIGHT
-                        : STEP_HEIGHT;
+                    TRANSITION_HEIGHT;
 
             }
 
@@ -3065,6 +3109,39 @@ function loadProject(project) {
             renderObject(
                 object
             );
+
+        }
+    );
+
+
+    /*
+       När alla objekt är renderade
+       räknar vi om höjden på alla händelser.
+    */
+    objects.forEach(
+        object => {
+
+            if (
+                object.type === STEP ||
+                object.type === START
+            ) {
+
+                const element =
+                    document.querySelector(
+                        `[data-object-id="${object.id}"]`
+                    );
+
+
+                if (element) {
+
+                    updateStepHeight(
+                        object,
+                        element
+                    );
+
+                }
+
+            }
 
         }
     );
@@ -3184,6 +3261,44 @@ function saveAsImage() {
         return;
 
     }
+
+
+    /*
+       Säkerställ att alla händelser
+       har rätt höjd innan export.
+    */
+
+    objects.forEach(
+        object => {
+
+            if (
+                object.type !== STEP &&
+                object.type !== START
+            ) {
+                return;
+            }
+
+
+            const element =
+                document.querySelector(
+                    `[data-object-id="${object.id}"]`
+                );
+
+
+            if (element) {
+
+                updateStepHeight(
+                    object,
+                    element
+                );
+
+            }
+
+        }
+    );
+
+
+    renderConnections();
 
 
     const bounds =
@@ -3611,6 +3726,128 @@ function drawSVGToCanvas(ctx) {
 
 
 /* =====================================================
+   TEXT MED RADBRYTNING
+===================================================== */
+
+function drawWrappedText(
+    ctx,
+    text,
+    x,
+    y,
+    maxWidth,
+    lineHeight
+) {
+
+    const words =
+        String(text || "").split(/\s+/);
+
+
+    const lines = [];
+
+    let currentLine = "";
+
+
+    words.forEach(
+        word => {
+
+            const testLine =
+                currentLine
+                    ? currentLine + " " + word
+                    : word;
+
+
+            if (
+                ctx.measureText(
+                    testLine
+                ).width <= maxWidth
+            ) {
+
+                currentLine =
+                    testLine;
+
+            }
+
+            else {
+
+                if (currentLine) {
+
+                    lines.push(
+                        currentLine
+                    );
+
+                }
+
+                currentLine =
+                    word;
+
+            }
+
+        }
+    );
+
+
+    if (currentLine) {
+
+        lines.push(
+            currentLine
+        );
+
+    }
+
+
+    /*
+       Hantera även manuella radbrytningar.
+    */
+
+    const finalLines = [];
+
+    lines.forEach(
+        line => {
+
+            line.split("\n").forEach(
+                part => {
+
+                    finalLines.push(
+                        part
+                    );
+
+                }
+            );
+
+        }
+    );
+
+
+    const totalHeight =
+        finalLines.length *
+        lineHeight;
+
+
+    let currentY =
+        y -
+        totalHeight / 2 +
+        lineHeight / 2;
+
+
+    finalLines.forEach(
+        line => {
+
+            ctx.fillText(
+                line,
+                x,
+                currentY
+            );
+
+            currentY +=
+                lineHeight;
+
+        }
+    );
+
+}
+
+
+/* =====================================================
    RITA OBJEKT TILL CANVAS
 ===================================================== */
 
@@ -3653,15 +3890,25 @@ function drawObjectToCanvas(
 
 
         const memoryWidth =
-            55;
+            65;
 
 
-        ctx.strokeRect(
-            object.x,
-            object.y,
+        ctx.beginPath();
+
+        ctx.moveTo(
+            object.x +
             memoryWidth,
+            object.y
+        );
+
+        ctx.lineTo(
+            object.x +
+            memoryWidth,
+            object.y +
             object.height
         );
+
+        ctx.stroke();
 
 
         ctx.fillStyle =
@@ -3669,7 +3916,7 @@ function drawObjectToCanvas(
 
 
         ctx.font =
-            "bold 15px Arial";
+            "bold 14px Arial";
 
 
         ctx.textAlign =
@@ -3690,19 +3937,30 @@ function drawObjectToCanvas(
 
 
         ctx.font =
-            "15px Arial";
+            "14px Arial";
 
 
-        ctx.fillText(
+        drawWrappedText(
+            ctx,
+
             object.event,
+
             object.x +
             memoryWidth +
             (
                 object.width -
                 memoryWidth
             ) / 2,
+
             object.y +
-            object.height / 2
+            object.height / 2,
+
+            object.width -
+            memoryWidth -
+            20,
+
+            18
+
         );
 
     }
@@ -3753,12 +4011,21 @@ function drawObjectToCanvas(
             "middle";
 
 
-        ctx.fillText(
+        drawWrappedText(
+            ctx,
+
             object.condition,
+
             object.x +
             object.width / 2,
+
             object.y +
-            object.height / 2
+            object.height / 2,
+
+            object.width - 20,
+
+            18
+
         );
 
     }
