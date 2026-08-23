@@ -427,7 +427,7 @@ function getBranch(id) {
 
 
 /* =====================================================
-   BYGGPUNKT
+   HÄMTA BYGGPUNKT
 ===================================================== */
 
 function getBuildObject() {
@@ -463,6 +463,12 @@ function selectBuildPoint(id) {
 
         activeBranchId =
             object.branchId;
+
+    }
+    else {
+
+        activeBranchId =
+            null;
 
     }
 
@@ -512,6 +518,7 @@ btnStep.addEventListener(
             );
 
             return;
+
         }
 
 
@@ -524,6 +531,7 @@ btnStep.addEventListener(
             return;
         }
 
+
         const step =
             createStep(
                 branch.x,
@@ -534,13 +542,16 @@ btnStep.addEventListener(
                 branch.id
             );
 
+
         connectVertical(
             parent,
             step
         );
 
+
         branch.buildPointId =
             step.id;
+
 
         selectBuildPoint(
             step.id
@@ -581,16 +592,19 @@ btnTransition.addEventListener(
                     MAIN_GAP
                 );
 
+
             connectVertical(
                 parent,
                 transition
             );
+
 
             selectBuildPoint(
                 transition.id
             );
 
             return;
+
         }
 
 
@@ -599,9 +613,11 @@ btnTransition.addEventListener(
                 parent.branchId
             );
 
+
         if (!branch) {
             return;
         }
+
 
         const transition =
             createTransition(
@@ -612,13 +628,16 @@ btnTransition.addEventListener(
                 branch.id
             );
 
+
         connectVertical(
             parent,
             transition
         );
 
+
         branch.buildPointId =
             transition.id;
+
 
         selectBuildPoint(
             transition.id
@@ -733,6 +752,7 @@ function createBranch(type) {
     const parent =
         getBuildObject();
 
+
     if (!parent) {
 
         alert(
@@ -740,7 +760,9 @@ function createBranch(type) {
         );
 
         return;
+
     }
+
 
     if (
         parent.type !== TRANSITION
@@ -751,7 +773,9 @@ function createBranch(type) {
         );
 
         return;
+
     }
+
 
     if (
         parent.branchId
@@ -762,6 +786,7 @@ function createBranch(type) {
         );
 
         return;
+
     }
 
 
@@ -839,14 +864,17 @@ function createBranch(type) {
                 branch.id
             );
 
+
         branch.buildPointId =
             transition.id;
+
 
         connectBranchStart(
             parent,
             transition,
             branch
         );
+
 
         selectBuildPoint(
             transition.id
@@ -864,14 +892,17 @@ function createBranch(type) {
                 branch.id
             );
 
+
         branch.buildPointId =
             step.id;
+
 
         connectBranchStart(
             parent,
             step,
             branch
         );
+
 
         selectBuildPoint(
             step.id
@@ -882,6 +913,7 @@ function createBranch(type) {
 
     activeBranchId =
         branch.id;
+
 
     updateUI();
 
@@ -909,6 +941,7 @@ function connectVertical(
             "normal"
 
     });
+
 
     renderConnections();
 
@@ -939,6 +972,7 @@ function connectBranchStart(
 
     });
 
+
     renderConnections();
 
 }
@@ -955,6 +989,7 @@ function renderObject(object) {
             `[data-object-id="${object.id}"]`
         );
 
+
     if (old) {
         old.remove();
     }
@@ -963,14 +998,18 @@ function renderObject(object) {
     const element =
         document.createElement("div");
 
+
     element.className =
         "sequence-object";
+
 
     element.dataset.objectId =
         object.id;
 
+
     element.style.left =
         object.x + "px";
+
 
     element.style.top =
         object.y + "px";
@@ -998,7 +1037,9 @@ function renderObject(object) {
     }
 
 
-    canvas.appendChild(element);
+    canvas.appendChild(
+        element
+    );
 
 
     element.addEventListener(
@@ -1011,6 +1052,7 @@ function renderObject(object) {
                 return;
             }
 
+
             if (
                 event.target.tagName === "INPUT" ||
                 event.target.isContentEditable
@@ -1018,7 +1060,9 @@ function renderObject(object) {
                 return;
             }
 
+
             event.stopPropagation();
+
 
             startDrag(
                 event,
@@ -1029,6 +1073,11 @@ function renderObject(object) {
         }
     );
 
+
+    /*
+       DUBBELKLICK = MARKERA
+       eller välj mål för gren.
+    */
 
     element.addEventListener(
         "dblclick",
@@ -1053,6 +1102,10 @@ function renderObject(object) {
             }
 
 
+            /*
+               Alla objekt kan markeras.
+            */
+
             selectBuildPoint(
                 object.id
             );
@@ -1072,14 +1125,18 @@ function renderStep(
     object
 ) {
 
-    element.classList.add("step");
+    element.classList.add(
+        "step"
+    );
 
 
     if (
         object.type === START
     ) {
 
-        element.classList.add("start");
+        element.classList.add(
+            "start"
+        );
 
     }
 
@@ -1105,6 +1162,7 @@ function renderStep(
         element.querySelector(
             ".step-memory"
         );
+
 
     const event =
         element.querySelector(
@@ -1163,7 +1221,9 @@ function renderTransition(
     object
 ) {
 
-    element.classList.add("transition");
+    element.classList.add(
+        "transition"
+    );
 
 
     element.innerHTML = `
@@ -1218,6 +1278,7 @@ function startDrag(
     const startMouseX =
         event.clientX;
 
+
     const startMouseY =
         event.clientY;
 
@@ -1225,11 +1286,14 @@ function startDrag(
     const startObjectX =
         object.x;
 
+
     const startObjectY =
         object.y;
 
 
-    element.classList.add("dragging");
+    element.classList.add(
+        "dragging"
+    );
 
 
     function move(moveEvent) {
@@ -1249,10 +1313,13 @@ function startDrag(
 
 
         object.x =
-            startObjectX + dx;
+            startObjectX +
+            dx;
+
 
         object.y =
-            startObjectY + dy;
+            startObjectY +
+            dy;
 
 
         if (
@@ -1263,6 +1330,7 @@ function startDrag(
                 getBranch(
                     object.branchId
                 );
+
 
             if (branch) {
 
@@ -1277,6 +1345,7 @@ function startDrag(
         element.style.left =
             object.x + "px";
 
+
         element.style.top =
             object.y + "px";
 
@@ -1288,12 +1357,16 @@ function startDrag(
 
     function stop() {
 
-        element.classList.remove("dragging");
+        element.classList.remove(
+            "dragging"
+        );
+
 
         document.removeEventListener(
             "mousemove",
             move
         );
+
 
         document.removeEventListener(
             "mouseup",
@@ -1341,6 +1414,7 @@ function renderConnections() {
                 getObject(
                     connection.from
                 );
+
 
             const to =
                 getObject(
@@ -1577,7 +1651,9 @@ function drawReconnect(
 ) {
 
     const parallel =
-        type.includes("parallel");
+        type.includes(
+            "parallel"
+        );
 
 
     const branch =
@@ -2191,15 +2267,18 @@ function drawLine(
         x1
     );
 
+
     line.setAttribute(
         "y1",
         y1
     );
 
+
     line.setAttribute(
         "x2",
         x2
     );
+
 
     line.setAttribute(
         "y2",
@@ -2244,15 +2323,18 @@ function drawColoredLine(
         x1
     );
 
+
     line.setAttribute(
         "y1",
         y1
     );
 
+
     line.setAttribute(
         "x2",
         x2
     );
+
 
     line.setAttribute(
         "y2",
@@ -2356,7 +2438,7 @@ function drawArrowUp(
 
 
 /* =====================================================
-   DELETE
+   RADERA MED BACKSPACE
 ===================================================== */
 
 document.addEventListener(
@@ -2364,29 +2446,44 @@ document.addEventListener(
     function(event) {
 
         if (
-            event.key !== "Delete"
+            event.key !== "Backspace"
         ) {
             return;
         }
 
+
+        /*
+           Backspace ska fungera normalt
+           när användaren skriver.
+        */
 
         if (
             event.target.tagName === "INPUT" ||
-            event.target.isContentEditable
+            event.target.isContentEditable ||
+            event.target.tagName === "TEXTAREA"
         ) {
             return;
         }
 
 
+        /*
+           Om inget objekt är markerat
+           gör vi ingenting.
+        */
+
         if (
-            selectedObjectId
+            !selectedObjectId
         ) {
-
-            deleteObject(
-                selectedObjectId
-            );
-
+            return;
         }
+
+
+        event.preventDefault();
+
+
+        deleteObject(
+            selectedObjectId
+        );
 
     }
 );
@@ -2398,12 +2495,97 @@ document.addEventListener(
 
 function deleteObject(id) {
 
-    objects =
-        objects.filter(
-            object =>
-                object.id !== id
+    const objectToDelete =
+        getObject(id);
+
+
+    if (!objectToDelete) {
+        return;
+    }
+
+
+    /*
+       Försök hitta objektet som låg
+       direkt före det som raderas.
+    */
+
+    let previousObject =
+        null;
+
+
+    const previousConnection =
+        connections.find(
+            connection =>
+                connection.to === id &&
+                connection.type === "normal"
         );
 
+
+    if (
+        previousConnection
+    ) {
+
+        previousObject =
+            getObject(
+                previousConnection.from
+            );
+
+    }
+
+
+    /*
+       Om objektet ligger i en gren,
+       hitta föregående objekt i samma gren.
+    */
+
+    if (
+        !previousObject &&
+        objectToDelete.branchId
+    ) {
+
+        const previous =
+            connections.find(
+                connection => {
+
+                    if (
+                        connection.to !== id
+                    ) {
+                        return false;
+                    }
+
+
+                    const from =
+                        getObject(
+                            connection.from
+                        );
+
+
+                    return (
+                        from &&
+                        from.branchId ===
+                            objectToDelete.branchId
+                    );
+
+                }
+            );
+
+
+        if (previous) {
+
+            previousObject =
+                getObject(
+                    previous.from
+                );
+
+        }
+
+    }
+
+
+    /*
+       Ta bort alla kopplingar
+       till/från objektet.
+    */
 
     connections =
         connections.filter(
@@ -2413,6 +2595,10 @@ function deleteObject(id) {
         );
 
 
+    /*
+       Ta bort loopar som använder objektet.
+    */
+
     loops =
         loops.filter(
             loop =>
@@ -2421,12 +2607,56 @@ function deleteObject(id) {
         );
 
 
-    branches =
-        branches.filter(
-            branch =>
-                branch.startObjectId !== id &&
-                branch.buildPointId !== id &&
-                branch.endObjectId !== id
+    /*
+       Uppdatera gren.
+    */
+
+    if (
+        objectToDelete.branchId
+    ) {
+
+        const branch =
+            getBranch(
+                objectToDelete.branchId
+            );
+
+
+        if (branch) {
+
+            if (
+                branch.buildPointId === id
+            ) {
+
+                branch.buildPointId =
+                    previousObject
+                        ? previousObject.id
+                        : null;
+
+            }
+
+
+            if (
+                branch.endObjectId === id
+            ) {
+
+                branch.endObjectId =
+                    null;
+
+            }
+
+        }
+
+    }
+
+
+    /*
+       Ta bort objektet.
+    */
+
+    objects =
+        objects.filter(
+            object =>
+                object.id !== id
         );
 
 
@@ -2441,14 +2671,96 @@ function deleteObject(id) {
     }
 
 
-    selectedObjectId =
+    /*
+       Efter radering:
+       markera föregående objekt automatiskt.
+    */
+
+    if (
+        previousObject &&
+        getObject(previousObject.id)
+    ) {
+
+        selectedObjectId =
+            previousObject.id;
+
+        buildPointId =
+            previousObject.id;
+
+        activeBranchId =
+            previousObject.branchId ||
+            null;
+
+    }
+
+    else {
+
+        /*
+           Om inget föregående objekt finns
+           försöker vi välja ett annat objekt.
+        */
+
+        if (
+            objects.length > 0
+        ) {
+
+            const lastObject =
+                objects[
+                    objects.length - 1
+                ];
+
+
+            selectedObjectId =
+                lastObject.id;
+
+
+            buildPointId =
+                lastObject.id;
+
+
+            activeBranchId =
+                lastObject.branchId ||
+                null;
+
+        }
+
+        else {
+
+            selectedObjectId =
+                null;
+
+            buildPointId =
+                null;
+
+            activeBranchId =
+                null;
+
+        }
+
+    }
+
+
+    /*
+       Avbryt återkoppling.
+    */
+
+    reconnectBranchId =
         null;
 
-    buildPointId =
-        null;
 
-    activeBranchId =
-        null;
+    document
+        .querySelectorAll(
+            ".reconnect-target"
+        )
+        .forEach(
+            element => {
+
+                element.classList.remove(
+                    "reconnect-target"
+                );
+
+            }
+        );
 
 
     renderConnections();
@@ -2509,7 +2821,7 @@ btnSave.addEventListener(
         const project = {
 
             version:
-                12,
+                13,
 
             objects,
 
@@ -2659,11 +2971,14 @@ function loadProject(project) {
     objects =
         project.objects || [];
 
+
     connections =
         project.connections || [];
 
+
     branches =
         project.branches || [];
+
 
     loops =
         project.loops || [];
@@ -2672,8 +2987,10 @@ function loadProject(project) {
     nextObjectId =
         project.nextObjectId || 1;
 
+
     nextMemoryNumber =
         project.nextMemoryNumber || 1;
+
 
     nextBranchId =
         project.nextBranchId || 1;
@@ -2797,19 +3114,25 @@ btnClear.addEventListener(
 function clearProject() {
 
     objects = [];
+
     connections = [];
+
     branches = [];
+
     loops = [];
 
 
     selectedObjectId =
         null;
 
+
     buildPointId =
         null;
 
+
     activeBranchId =
         null;
+
 
     reconnectBranchId =
         null;
@@ -2818,8 +3141,10 @@ function clearProject() {
     nextObjectId =
         1;
 
+
     nextMemoryNumber =
         1;
+
 
     nextBranchId =
         1;
@@ -2887,6 +3212,7 @@ function saveAsImage() {
 
     exportCanvas.width =
         width * 2;
+
 
     exportCanvas.height =
         height * 2;
@@ -2998,10 +3324,15 @@ function getDiagramBounds() {
         return {
 
             minX: 0,
+
             minY: 0,
+
             maxX: 1000,
+
             maxY: 1000,
+
             width: 1000,
+
             height: 1000
 
         };
@@ -3012,11 +3343,14 @@ function getDiagramBounds() {
     let minX =
         Infinity;
 
+
     let minY =
         Infinity;
 
+
     let maxX =
         -Infinity;
+
 
     let maxY =
         -Infinity;
@@ -3070,8 +3404,11 @@ function getDiagramBounds() {
     return {
 
         minX,
+
         minY,
+
         maxX,
+
         maxY,
 
         width:
@@ -3104,25 +3441,33 @@ function drawSVGToCanvas(ctx) {
 
             const x1 =
                 parseFloat(
-                    line.getAttribute("x1")
+                    line.getAttribute(
+                        "x1"
+                    )
                 );
 
 
             const y1 =
                 parseFloat(
-                    line.getAttribute("y1")
+                    line.getAttribute(
+                        "y1"
+                    )
                 );
 
 
             const x2 =
                 parseFloat(
-                    line.getAttribute("x2")
+                    line.getAttribute(
+                        "x2"
+                    )
                 );
 
 
             const y2 =
                 parseFloat(
-                    line.getAttribute("y2")
+                    line.getAttribute(
+                        "y2"
+                    )
                 );
 
 
@@ -3184,7 +3529,9 @@ function drawSVGToCanvas(ctx) {
 
             const points =
                 polygon
-                    .getAttribute("points")
+                    .getAttribute(
+                        "points"
+                    )
                     .trim()
                     .split(/\s+/);
 
@@ -3200,18 +3547,25 @@ function drawSVGToCanvas(ctx) {
 
 
             points.forEach(
-                function(point, index) {
+                function(
+                    point,
+                    index
+                ) {
 
                     const parts =
                         point.split(",");
 
 
                     const x =
-                        parseFloat(parts[0]);
+                        parseFloat(
+                            parts[0]
+                        );
 
 
                     const y =
-                        parseFloat(parts[1]);
+                        parseFloat(
+                            parts[1]
+                        );
 
 
                     if (
@@ -3242,7 +3596,9 @@ function drawSVGToCanvas(ctx) {
 
 
             ctx.fillStyle =
-                polygon.getAttribute("fill") ||
+                polygon.getAttribute(
+                    "fill"
+                ) ||
                 "#eeeeee";
 
 
@@ -3271,8 +3627,10 @@ function drawObjectToCanvas(
         ctx.strokeStyle =
             "#eeeeee";
 
+
         ctx.fillStyle =
             "#181818";
+
 
         ctx.lineWidth =
             2;
@@ -3354,8 +3712,10 @@ function drawObjectToCanvas(
         ctx.fillStyle =
             "#181818";
 
+
         ctx.strokeStyle =
             "#eeeeee";
+
 
         ctx.lineWidth =
             2;
@@ -3407,7 +3767,7 @@ function drawObjectToCanvas(
 
 
 /* =====================================================
-   EXPORTERA BILD
+   SKAPA BILD-KNAPP
 ===================================================== */
 
 function createExportButton() {
@@ -3628,6 +3988,7 @@ function updateSelectionVisuals() {
                     "selected"
                 );
 
+
                 element.classList.remove(
                     "build-point"
                 );
@@ -3681,15 +4042,24 @@ function updateSelectionVisuals() {
 
 
 /* =====================================================
-   ESCAPE
+   HJÄLPFUNKTIONER
 ===================================================== */
 
 function escapeHtml(value) {
 
     return String(value)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;");
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        );
 
 }
 
@@ -3697,16 +4067,28 @@ function escapeHtml(value) {
 function escapeAttribute(value) {
 
     return String(value)
-        .replace(/&/g, "&amp;")
-        .replace(/"/g, "&quot;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;");
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        );
 
 }
 
 
 /* =====================================================
-   START
+   STARTA
 ===================================================== */
 
 createExportButton();
