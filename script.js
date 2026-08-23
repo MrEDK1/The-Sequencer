@@ -53,18 +53,10 @@ const MAIN_GAP = 70;
 const BRANCH_GAP = 70;
 
 const FIRST_BRANCH_OFFSET = 140;
-
 const BRANCH_SPACING = 120;
 
 const RECONNECT_MARGIN = 80;
 const RECONNECT_SPACING = 55;
-
-
-/*
-   Minsta höjd på en händelseruta.
-   Rutorna får sedan växa beroende på texten.
-*/
-const MIN_STEP_HEIGHT = 66;
 
 
 /* =====================================================
@@ -292,6 +284,7 @@ btnStart.addEventListener(
             );
 
             return;
+
         }
 
         const start =
@@ -336,7 +329,7 @@ function createStep(
             STEP_WIDTH,
 
         height:
-            MIN_STEP_HEIGHT,
+            STEP_HEIGHT,
 
         memory:
             type === START
@@ -854,10 +847,25 @@ function createBranch(type) {
     branches.push(branch);
 
 
+    /*
+       GRENENS FÖRSTA OBJEKT SKA LIGGA
+       PÅ SAMMA HÖJD SOM NÄSTA OBJEKT
+       PÅ HUVUDLINJEN.
+
+       Det gör att grenen går:
+       
+       huvudgren ────────┐
+                         │
+                         └── ruta
+
+       utan att den första lodräta
+       delen lutar.
+    */
+
     const branchY =
         parent.y +
         parent.height +
-        55;
+        MAIN_GAP;
 
 
     if (
@@ -1049,23 +1057,6 @@ function renderObject(object) {
     );
 
 
-    /*
-       Uppdatera höjden efter att
-       texten faktiskt har renderats.
-    */
-    if (
-        object.type === STEP ||
-        object.type === START
-    ) {
-
-        updateStepHeight(
-            object,
-            element
-        );
-
-    }
-
-
     element.addEventListener(
         "mousedown",
         function(event) {
@@ -1079,6 +1070,7 @@ function renderObject(object) {
 
             if (
                 event.target.tagName === "INPUT" ||
+                event.target.tagName === "TEXTAREA" ||
                 event.target.isContentEditable
             ) {
                 return;
@@ -1097,11 +1089,6 @@ function renderObject(object) {
         }
     );
 
-
-    /*
-       DUBBELKLICK = MARKERA
-       eller välj mål för gren.
-    */
 
     element.addEventListener(
         "dblclick",
@@ -1132,63 +1119,6 @@ function renderObject(object) {
 
         }
     );
-
-}
-
-
-/* =====================================================
-   UPPDATERA HÄNDELSERUTANS HÖJD
-===================================================== */
-
-function updateStepHeight(
-    object,
-    element
-) {
-
-    const eventElement =
-        element.querySelector(
-            ".step-event"
-        );
-
-
-    if (!eventElement) {
-        return;
-    }
-
-
-    /*
-       Tillfälligt låter vi innehållet
-       bestämma hur hög rutan behöver vara.
-    */
-
-    element.style.height =
-        "auto";
-
-
-    eventElement.style.height =
-        "auto";
-
-
-    const requiredHeight =
-        Math.max(
-            MIN_STEP_HEIGHT,
-            eventElement.scrollHeight + 20
-        );
-
-
-    object.height =
-        requiredHeight;
-
-
-    element.style.height =
-        requiredHeight + "px";
-
-
-    eventElement.style.height =
-        "auto";
-
-
-    renderConnections();
 
 }
 
@@ -1281,15 +1211,65 @@ function renderStep(
             object.event =
                 event.innerText;
 
-            updateStepHeight(
-                object,
-                element
+            autoResizeStep(
+                element,
+                event,
+                object
             );
 
             updateUI();
 
+            renderConnections();
+
         }
     );
+
+
+    autoResizeStep(
+        element,
+        event,
+        object
+    );
+
+}
+
+
+/* =====================================================
+   AUTO-STORLEK HÄNDELSE
+===================================================== */
+
+function autoResizeStep(
+    element,
+    eventElement,
+    object
+) {
+
+    const minHeight =
+        STEP_HEIGHT;
+
+
+    /*
+       Hämta faktisk textstorlek.
+    */
+
+    eventElement.style.height =
+        "auto";
+
+
+    const requiredHeight =
+        Math.max(
+            minHeight,
+            eventElement.scrollHeight +
+            20
+        );
+
+
+    object.height =
+        requiredHeight;
+
+
+    element.style.height =
+        requiredHeight + "px";
 
 }
 
@@ -1310,11 +1290,10 @@ function renderTransition(
 
     element.innerHTML = `
 
-        <input
+        <textarea
             class="transition-input"
-            value="${escapeAttribute(object.condition)}"
             spellcheck="false"
-        >
+        ></textarea>
 
     `;
 
@@ -1323,6 +1302,10 @@ function renderTransition(
         element.querySelector(
             ".transition-input"
         );
+
+
+    input.value =
+        object.condition;
 
 
     input.addEventListener(
@@ -1339,10 +1322,60 @@ function renderTransition(
             object.condition =
                 input.value;
 
+            autoResizeTransition(
+                element,
+                input,
+                object
+            );
+
             updateUI();
+
+            renderConnections();
 
         }
     );
+
+
+    autoResizeTransition(
+        element,
+        input,
+        object
+    );
+
+}
+
+
+/* =====================================================
+   AUTO-STORLEK ÖVERGÅNG
+===================================================== */
+
+function autoResizeTransition(
+    element,
+    input,
+    object
+) {
+
+    const minHeight =
+        TRANSITION_HEIGHT;
+
+
+    input.style.height =
+        "auto";
+
+
+    const requiredHeight =
+        Math.max(
+            minHeight,
+            input.scrollHeight
+        );
+
+
+    object.height =
+        requiredHeight;
+
+
+    element.style.height =
+        requiredHeight + "px";
 
 }
 
@@ -1649,6 +1682,21 @@ function drawBranchStart(
             ? branch.color
             : "#eeeeee";
 
+
+    /*
+       Alternativgren:
+
+       från sidan →
+                   │
+                   │
+                ┌──┴──┐
+                │ ruta │
+
+       Eftersom branchY nu ligger
+       på samma nivå som nästa
+       huvudobjekt blir första
+       lodräta delen helt rak.
+    */
 
     if (!parallel) {
 
@@ -2536,8 +2584,8 @@ document.addEventListener(
 
         if (
             event.target.tagName === "INPUT" ||
-            event.target.isContentEditable ||
-            event.target.tagName === "TEXTAREA"
+            event.target.tagName === "TEXTAREA" ||
+            event.target.isContentEditable
         ) {
             return;
         }
@@ -2715,6 +2763,11 @@ function deleteObject(id) {
         element.remove();
     }
 
+
+    /*
+       Efter radering markeras
+       föregående objekt.
+    */
 
     if (
         previousObject &&
@@ -3083,25 +3136,12 @@ function loadProject(project) {
             }
 
 
-            if (
-                object.type === STEP ||
-                object.type === START
-            ) {
-
-                /*
-                   Gamla projekt som sparats med
-                   fast höjd får sin nya höjd
-                   automatiskt efter texten.
-                */
-                object.height =
-                    MIN_STEP_HEIGHT;
-
-            }
-
-            else if (!object.height) {
+            if (!object.height) {
 
                 object.height =
-                    TRANSITION_HEIGHT;
+                    object.type === TRANSITION
+                        ? TRANSITION_HEIGHT
+                        : STEP_HEIGHT;
 
             }
 
@@ -3115,28 +3155,62 @@ function loadProject(project) {
 
 
     /*
-       När alla objekt är renderade
-       räknar vi om höjden på alla händelser.
+       Anpassa höjden efter texten
+       även när ett gammalt projekt
+       laddas.
     */
+
     objects.forEach(
         object => {
+
+            const element =
+                document.querySelector(
+                    `[data-object-id="${object.id}"]`
+                );
+
+
+            if (!element) {
+                return;
+            }
+
 
             if (
                 object.type === STEP ||
                 object.type === START
             ) {
 
-                const element =
-                    document.querySelector(
-                        `[data-object-id="${object.id}"]`
+                const eventElement =
+                    element.querySelector(
+                        ".step-event"
                     );
 
 
-                if (element) {
+                if (eventElement) {
 
-                    updateStepHeight(
-                        object,
-                        element
+                    autoResizeStep(
+                        element,
+                        eventElement,
+                        object
+                    );
+
+                }
+
+            }
+
+            else {
+
+                const input =
+                    element.querySelector(
+                        ".transition-input"
+                    );
+
+
+                if (input) {
+
+                    autoResizeTransition(
+                        element,
+                        input,
+                        object
                     );
 
                 }
@@ -3261,44 +3335,6 @@ function saveAsImage() {
         return;
 
     }
-
-
-    /*
-       Säkerställ att alla händelser
-       har rätt höjd innan export.
-    */
-
-    objects.forEach(
-        object => {
-
-            if (
-                object.type !== STEP &&
-                object.type !== START
-            ) {
-                return;
-            }
-
-
-            const element =
-                document.querySelector(
-                    `[data-object-id="${object.id}"]`
-                );
-
-
-            if (element) {
-
-                updateStepHeight(
-                    object,
-                    element
-                );
-
-            }
-
-        }
-    );
-
-
-    renderConnections();
 
 
     const bounds =
@@ -3439,15 +3475,10 @@ function getDiagramBounds() {
         return {
 
             minX: 0,
-
             minY: 0,
-
             maxX: 1000,
-
             maxY: 1000,
-
             width: 1000,
-
             height: 1000
 
         };
@@ -3458,14 +3489,11 @@ function getDiagramBounds() {
     let minX =
         Infinity;
 
-
     let minY =
         Infinity;
 
-
     let maxX =
         -Infinity;
-
 
     let maxY =
         -Infinity;
@@ -3508,22 +3536,16 @@ function getDiagramBounds() {
 
 
     minX -= 150;
-
     maxX += 150;
-
     minY -= 100;
-
     maxY += 150;
 
 
     return {
 
         minX,
-
         minY,
-
         maxX,
-
         maxY,
 
         width:
@@ -3726,128 +3748,6 @@ function drawSVGToCanvas(ctx) {
 
 
 /* =====================================================
-   TEXT MED RADBRYTNING
-===================================================== */
-
-function drawWrappedText(
-    ctx,
-    text,
-    x,
-    y,
-    maxWidth,
-    lineHeight
-) {
-
-    const words =
-        String(text || "").split(/\s+/);
-
-
-    const lines = [];
-
-    let currentLine = "";
-
-
-    words.forEach(
-        word => {
-
-            const testLine =
-                currentLine
-                    ? currentLine + " " + word
-                    : word;
-
-
-            if (
-                ctx.measureText(
-                    testLine
-                ).width <= maxWidth
-            ) {
-
-                currentLine =
-                    testLine;
-
-            }
-
-            else {
-
-                if (currentLine) {
-
-                    lines.push(
-                        currentLine
-                    );
-
-                }
-
-                currentLine =
-                    word;
-
-            }
-
-        }
-    );
-
-
-    if (currentLine) {
-
-        lines.push(
-            currentLine
-        );
-
-    }
-
-
-    /*
-       Hantera även manuella radbrytningar.
-    */
-
-    const finalLines = [];
-
-    lines.forEach(
-        line => {
-
-            line.split("\n").forEach(
-                part => {
-
-                    finalLines.push(
-                        part
-                    );
-
-                }
-            );
-
-        }
-    );
-
-
-    const totalHeight =
-        finalLines.length *
-        lineHeight;
-
-
-    let currentY =
-        y -
-        totalHeight / 2 +
-        lineHeight / 2;
-
-
-    finalLines.forEach(
-        line => {
-
-            ctx.fillText(
-                line,
-                x,
-                currentY
-            );
-
-            currentY +=
-                lineHeight;
-
-        }
-    );
-
-}
-
-
-/* =====================================================
    RITA OBJEKT TILL CANVAS
 ===================================================== */
 
@@ -3890,25 +3790,15 @@ function drawObjectToCanvas(
 
 
         const memoryWidth =
-            65;
+            55;
 
 
-        ctx.beginPath();
-
-        ctx.moveTo(
-            object.x +
+        ctx.strokeRect(
+            object.x,
+            object.y,
             memoryWidth,
-            object.y
-        );
-
-        ctx.lineTo(
-            object.x +
-            memoryWidth,
-            object.y +
             object.height
         );
-
-        ctx.stroke();
 
 
         ctx.fillStyle =
@@ -3916,7 +3806,7 @@ function drawObjectToCanvas(
 
 
         ctx.font =
-            "bold 14px Arial";
+            "bold 15px Arial";
 
 
         ctx.textAlign =
@@ -3936,31 +3826,22 @@ function drawObjectToCanvas(
         );
 
 
+        /*
+           Händelsetext med radbrytning
+           vid export.
+        */
+
         ctx.font =
-            "14px Arial";
+            "15px Arial";
 
 
         drawWrappedText(
             ctx,
-
             object.event,
-
-            object.x +
-            memoryWidth +
-            (
-                object.width -
-                memoryWidth
-            ) / 2,
-
-            object.y +
-            object.height / 2,
-
-            object.width -
-            memoryWidth -
-            20,
-
-            18
-
+            object.x + memoryWidth,
+            object.y,
+            object.width - memoryWidth,
+            object.height
         );
 
     }
@@ -4003,32 +3884,129 @@ function drawObjectToCanvas(
             "15px Arial";
 
 
-        ctx.textAlign =
-            "center";
-
-
-        ctx.textBaseline =
-            "middle";
-
-
         drawWrappedText(
             ctx,
-
             object.condition,
-
-            object.x +
-            object.width / 2,
-
-            object.y +
-            object.height / 2,
-
-            object.width - 20,
-
-            18
-
+            object.x,
+            object.y,
+            object.width,
+            object.height
         );
 
     }
+
+}
+
+
+/* =====================================================
+   RADBRYTNING VID EXPORT
+===================================================== */
+
+function drawWrappedText(
+    ctx,
+    text,
+    x,
+    y,
+    width,
+    height
+) {
+
+    const words =
+        String(text)
+            .split(/\s+/);
+
+
+    const lines = [];
+
+    let currentLine =
+        "";
+
+
+    const lineHeight =
+        20;
+
+
+    words.forEach(
+        word => {
+
+            const testLine =
+                currentLine
+                    ? currentLine +
+                      " " +
+                      word
+                    : word;
+
+
+            if (
+                ctx.measureText(
+                    testLine
+                ).width > width - 20 &&
+                currentLine
+            ) {
+
+                lines.push(
+                    currentLine
+                );
+
+                currentLine =
+                    word;
+
+            }
+
+            else {
+
+                currentLine =
+                    testLine;
+
+            }
+
+        }
+    );
+
+
+    if (currentLine) {
+        lines.push(
+            currentLine
+        );
+    }
+
+
+    ctx.textAlign =
+        "center";
+
+
+    ctx.textBaseline =
+        "middle";
+
+
+    const totalHeight =
+        lines.length *
+        lineHeight;
+
+
+    let startY =
+        y +
+        height / 2 -
+        totalHeight / 2 +
+        lineHeight / 2;
+
+
+    lines.forEach(
+        line => {
+
+            ctx.fillText(
+                line,
+                x +
+                width / 2,
+                startY
+            );
+
+
+            startY +=
+                lineHeight;
+
+        }
+    );
 
 }
 
