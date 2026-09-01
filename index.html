@@ -1,0 +1,4153 @@
+<!DOCTYPE html>
+<html lang="sv">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        The Sequencer
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+</head>
+
+
+<body>
+<!-- ===================================================
+     ECAT LOGIN
+=================================================== -->
+
+<div
+    id="loginScreen"
+    class="login-screen"
+>
+
+    <div class="login-card">
+
+        <div class="login-brand">
+
+            <div class="login-logo-frame">
+                <img
+                    class="login-logo"
+                    src="ecat-logo.png"
+                    alt="ECAT-logotyp"
+                >
+            </div>
+
+            <div class="login-ecat">
+                ECAT
+            </div>
+
+            <h1>
+                The Sequencer
+            </h1>
+
+        </div>
+
+
+        <div class="login-form">
+
+            <label for="loginUsername">
+                Användarnamn
+            </label>
+
+            <input
+                id="loginUsername"
+                type="text"
+                autocomplete="off"
+                spellcheck="false"
+                placeholder="Användarnamn"
+            >
+
+            <div class="login-hint">
+                Hint: tingsholm26
+            </div>
+
+            <button id="btnLogin">
+                Öppna The Sequencer
+            </button>
+
+            <div
+                id="loginError"
+                class="login-error"
+                aria-live="polite"
+            ></div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ===================================================
+     TOPBAR
+=================================================== -->
+
+<header class="topbar">
+
+    <div class="topbar-logo-frame">
+        <img
+            class="topbar-logo"
+            src="ecat-logo-header.png"
+            alt="ECAT-logotyp"
+        >
+    </div>
+
+    <div class="title">
+
+        <h1>
+            The Sequencer
+        </h1>
+
+        <span>
+            By ECAT - Edgar Computing &amp; Automation Technology
+        </span>
+
+    
+</div>
+
+
+    <div class="toolbar">
+
+
+        <button id="btnStep">
+            + Händelse
+        </button>
+
+
+        <button id="btnTransition">
+            + Övergång
+        </button>
+
+
+        <button id="btnAddSequence">
+            + Lägg till sekvens
+        </button>
+
+
+        <button id="btnAlternative">
+            Alternativgren
+        </button>
+
+
+        <button id="btnParallel">
+            Parallellgren
+        </button>
+
+
+        <button id="btnReconnect">
+            Koppla gren
+        </button>
+
+
+        <button id="btnLoop">
+            ↩ Loop till start
+        </button>
+
+
+        <button id="btnLadder">
+            Ladder
+        </button>
+
+        <button
+            id="btnClear"
+            class="danger"
+        >
+            Rensa
+        </button>
+
+        <button
+    id="btnWarnings"
+    class="warning-button"
+>
+    ⚠ 0
+</button>
+
+
+        <button id="btnSave">
+            Spara
+        </button>
+
+
+        <button id="btnLoad">
+            Ladda
+        </button>
+
+
+        <button id="btnImage">
+            Spara som bild
+        </button>
+<button id="btnCenterView">
+    Centrera vy
+</button>
+
+<button
+    id="btnInstructions"
+    type="button"
+>
+    ? Instruktioner
+</button>
+<div class="compact-menu">
+
+    <button
+        id="btnCompactMenu"
+        class="compact-menu-button"
+        type="button"
+        aria-label="Öppna meny"
+    >
+        ☰
+    </button>
+
+    <div
+        id="compactMenuDropdown"
+        class="compact-menu-dropdown"
+    >
+
+        <button
+            type="button"
+            data-menu-action="step"
+        >
+            + Händelse
+        </button>
+
+        <button
+            type="button"
+            data-menu-action="transition"
+        >
+            + Övergång
+        </button>
+
+        <button
+            type="button"
+            data-menu-action="ladder"
+        >
+            Ladder
+        </button>
+
+        <button
+            type="button"
+            data-menu-action="clear"
+            class="danger"
+        >
+            Rensa
+        </button>
+
+        <button
+            type="button"
+            data-menu-action="save"
+        >
+            Spara
+        </button>
+
+        <button
+            type="button"
+            data-menu-action="load"
+        >
+            Ladda
+        </button>
+
+        <button
+            type="button"
+            data-menu-action="image"
+        >
+            Spara som bild
+        </button>
+
+        <button
+            type="button"
+            data-menu-action="center"
+        >
+            Centrera vy
+        </button>
+
+    </div>
+
+</div>
+
+
+        <input
+            type="file"
+            id="fileInput"
+            accept=".json"
+            hidden
+        >
+
+    </div>
+
+</header>
+
+<!-- ===================================================
+     VARNINGAR
+=================================================== -->
+
+<section
+    id="warningPanel"
+    class="warning-panel"
+>
+
+    <div class="warning-panel-header">
+
+        <div>
+
+            <h2>
+                Varningar
+            </h2>
+
+            <span id="warningSummary">
+                Inga varningar
+            </span>
+
+        </div>
+
+
+        <button id="btnCloseWarnings">
+            Stäng
+        </button>
+
+    </div>
+
+
+    <div
+        id="warningList"
+        class="warning-list"
+    >
+
+        <div class="warning-empty">
+            ✓ Inga varningar
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ===================================================
+     SIDEBAR
+=================================================== -->
+
+<aside class="sidebar">
+
+    <h2>
+        Byggpunkt
+    </h2>
+
+
+    <div
+        id="buildPoint"
+        class="info-box"
+    >
+        Ingen vald
+    </div>
+
+
+    <h2>
+        Markerat
+    </h2>
+
+
+    <div
+        id="selectedInfo"
+        class="info-box"
+    >
+        Inget objekt valt.
+    </div>
+
+
+    <h2>
+        Gren
+    </h2>
+
+
+    <div
+        id="branchInfo"
+        class="info-box"
+    >
+        Ingen gren
+    </div>
+<!-- ===================================================
+     I/O SNABBINMATNING
+=================================================== -->
+
+<h2>
+    I/O
+</h2>
+
+
+<div class="io-quick-add">
+
+    <input
+        id="ioAddressInput"
+        type="text"
+        placeholder="Adress"
+        spellcheck="false"
+    >
+
+
+    <input
+        id="ioDescriptionInput"
+        type="text"
+        placeholder="Beskrivning"
+        spellcheck="false"
+    >
+
+
+    <button
+        id="btnOpenIOList"
+        type="button"
+    >
+        I/O-lista
+    </button>
+
+</div>
+
+    <div class="instructions">
+
+        <h2>
+            Kontroller
+        </h2>
+
+
+        <p>
+            <b>Dubbelklick</b>
+            <br>
+            Markera byggpunkt eller kopplingsmål.
+        </p>
+
+
+        <p>
+            <b>+ Händelse / + Övergång</b>
+            <br>
+            Bygg vidare från slutet av en sekvens.
+        </p>
+
+
+        <p>
+            <b>+ Lägg till sekvens</b>
+            <br>
+            Lägg till en ny händelse och övergång,
+            även mitt i en befintlig sekvens.
+        </p>
+
+
+        <p>
+            <b>Klicka i händelsetext</b>
+            <br>
+            Öppna inställningar för utgång, timer och räknare.
+        </p>
+
+
+        <p>
+            <b>Flera utgångar</b>
+            <br>
+            Skriv exempelvis Y0, Y1, Y4 i utgångsfältet.
+        </p>
+
+
+        <p>
+            <b>Vänsterklick + dra</b>
+            <br>
+            Flytta objekt uppåt eller nedåt.
+        </p>
+
+
+        <p>
+            <b>Vänsterklick + dra på tom yta</b>
+            <br>
+            Flytta arbetsytan.
+        </p>
+
+
+        <p>
+            <b>Ctrl + mushjul</b>
+            <br>
+            Zooma in eller ut.
+        </p>
+
+
+        <p>
+            <b>Delete / Backspace</b>
+            <br>
+            Ta bort markerat objekt.
+        </p>
+
+
+        <p>
+            <b>Esc</b>
+            <br>
+            Avbryt kopplingsläge.
+        </p>
+
+    </div>
+
+</aside>
+
+
+
+<!-- ===================================================
+     ARBETSYTA
+=================================================== -->
+
+<main
+    id="workspace"
+    class="workspace"
+>
+
+    <div
+        id="canvas"
+        class="canvas"
+    >
+
+        <svg
+            id="connections"
+            class="connections"
+        ></svg>
+
+
+        <div
+            id="emptyMessage"
+            class="empty-message"
+        >
+            Börja med att lägga till ett startsteg.
+        </div>
+
+    </div>
+
+</main>
+
+
+
+<!-- ===================================================
+     LADDER
+=================================================== -->
+
+<section id="ladderPanel">
+
+    <div class="ladder-header">
+
+        <div>
+
+            <h2>
+                Ladder
+            </h2>
+
+            <span>
+                Genereras automatiskt från sekvensdiagrammet
+            </span>
+
+        </div>
+
+
+        <button id="btnCloseLadder">
+            Stäng
+        </button>
+
+    </div>
+
+
+    <div
+        id="ladderContent"
+        class="ladder-content"
+    ></div>
+
+</section>
+
+
+
+<!-- ===================================================
+     ZOOM
+=================================================== -->
+
+<div class="zoom-display">
+
+    Zoom:
+
+    <span id="zoomValue">
+        100%
+    </span>
+
+</div>
+
+<!-- ===================================================
+     I/O-LISTA
+=================================================== -->
+
+<div
+    id="ioListOverlay"
+    class="io-list-overlay"
+>
+
+    <div class="io-list-window">
+
+        <div class="io-list-header">
+
+            <h2>
+                I/O-lista
+            </h2>
+
+            <button
+                id="btnCloseIOList"
+                class="io-list-close"
+                type="button"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <div class="io-list-table-header">
+
+            <div>
+                Adress
+            </div>
+
+            <div>
+                Beskrivning
+            </div>
+
+            <div></div>
+
+        </div>
+
+
+        <div
+            id="ioListRows"
+            class="io-list-rows"
+        ></div>
+
+
+        <button
+            id="btnAddIORow"
+            class="io-list-add"
+            type="button"
+        >
+            + Lägg till rad
+        </button>
+
+    </div>
+
+</div>
+<!-- ===================================================
+     INSTRUKTIONER
+=================================================== -->
+
+<div
+    id="instructionsOverlay"
+    class="instructions-overlay"
+    aria-hidden="true"
+>
+
+    <div class="instructions-window">
+
+        <!-- HEADER -->
+
+        <div class="instructions-header">
+
+            <div class="instructions-brand">
+
+                <h1>
+                    The Sequencer
+                </h1>
+
+                <span>
+                    Snabbguide
+                </span>
+
+            </div>
+
+
+            <button
+                id="btnCloseInstructions"
+                class="instructions-close"
+                type="button"
+            >
+                ✕ Stäng
+            </button>
+
+        </div>
+
+
+        <!-- NAVIGATION -->
+
+        <nav class="instructions-nav">
+
+            <button
+                type="button"
+                data-instruction-target="instructionStart"
+            >
+                Kom igång
+            </button>
+
+            <button
+                type="button"
+                data-instruction-target="instructionBuild"
+            >
+                Bygga
+            </button>
+
+            <button
+                type="button"
+                data-instruction-target="instructionBranches"
+            >
+                Grenar
+            </button>
+
+            <button
+                type="button"
+                data-instruction-target="instructionIO"
+            >
+                I/O
+            </button>
+
+            <button
+                type="button"
+                data-instruction-target="instructionLadder"
+            >
+                Ladder
+            </button>
+
+            <button
+                type="button"
+                data-instruction-target="instructionControls"
+            >
+                Kontroller
+            </button>
+
+        </nav>
+
+
+        <!-- INNEHÅLL -->
+
+        <div
+            id="instructionsContent"
+            class="instructions-content"
+        >
+
+<section
+    id="instructionStart"
+    class="instruction-section instruction-start-section"
+>
+
+    <div class="instruction-number">
+        1
+    </div>
+
+    <div class="instruction-main">
+
+        <div class="instruction-section-heading">
+
+            <h2>
+                Kom igång
+            </h2>
+
+            <p>
+                Bygg din första sekvens.
+            </p>
+
+        </div>
+
+
+        <!-- VISUELL SEKVENSMALL -->
+
+        <div class="instruction-sequence-example">
+
+            <!-- START -->
+
+            <div class="instruction-flow-row">
+
+                <div class="instruction-flow-object">
+
+                    <div class="guide-start">
+
+                        <span class="guide-address">
+                            M0
+                        </span>
+
+                        <span class="guide-text">
+                            START
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="instruction-explanation">
+
+                    <strong>
+                        START
+                    </strong>
+
+                    <span>
+                        Här börjar sekvensen.
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="guide-flow-line">
+                <span>↓</span>
+            </div>
+
+
+            <!-- HÄNDELSE -->
+
+            <div class="instruction-flow-row">
+
+                <div class="instruction-flow-object">
+
+                    <div class="guide-step">
+
+                        <span class="guide-address">
+                            H1
+                        </span>
+
+                        <span class="guide-text">
+                            Borr ut
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="instruction-explanation">
+
+                    <strong>
+                        HÄNDELSE
+                    </strong>
+
+                    <span>
+                        Vad som ska hända.
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="guide-flow-line">
+                <span>↓</span>
+            </div>
+
+
+            <!-- ÖVERGÅNG -->
+
+            <div class="instruction-flow-row">
+
+                <div class="instruction-flow-object">
+
+                    <div class="guide-transition">
+
+                        <span class="guide-address">
+                            X0
+                        </span>
+
+                        <span class="guide-text">
+                            Borr ute
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="instruction-explanation">
+
+                    <strong>
+                        ÖVERGÅNG
+                    </strong>
+
+                    <span>
+                        När sekvensen får gå vidare.
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- LÄGG TILL SEKVENS -->
+
+        <div class="instruction-add-sequence">
+
+            <button
+                type="button"
+                tabindex="-1"
+            >
+                + Lägg till sekvens
+            </button>
+
+            <span class="instruction-add-arrow">
+                →
+            </span>
+
+            <div class="instruction-created-pair">
+
+                <span class="instruction-created-step">
+                    Händelse
+                </span>
+
+                <span>+</span>
+
+                <span class="instruction-created-transition">
+                    Övergång
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- TRE STEG -->
+
+        <div class="instruction-quick-steps">
+
+            <div class="instruction-quick-step">
+
+                <span class="quick-step-number">
+                    1
+                </span>
+
+                <strong>
+                    Markera
+                </strong>
+
+                <span>
+                    var du vill bygga
+                </span>
+
+            </div>
+
+
+            <div class="quick-step-arrow">
+                →
+            </div>
+
+
+            <div class="instruction-quick-step">
+
+                <span class="quick-step-number">
+                    2
+                </span>
+
+                <strong>
+                    Lägg till sekvens
+                </strong>
+
+            </div>
+
+
+            <div class="quick-step-arrow">
+                →
+            </div>
+
+
+            <div class="instruction-quick-step">
+
+                <span class="quick-step-number">
+                    3
+                </span>
+
+<strong>
+    Ange
+</strong>
+
+<span>
+    in-/utgångar och villkor
+</span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<section
+    id="instructionBuild"
+    class="instruction-section instruction-build-section"
+>
+
+    <div class="instruction-number">
+        2
+    </div>
+
+    <div class="instruction-main">
+
+        <div class="instruction-section-heading">
+
+            <h2>
+                Bygga
+            </h2>
+
+            <p>
+                Händelser, övergångar och byggpunkten.
+            </p>
+
+        </div>
+
+
+        <!-- =========================================
+             HÄNDELSE
+        ========================================== -->
+
+        <div class="build-guide-card">
+
+            <div class="build-guide-visual">
+
+                <div class="guide-step guide-step-large">
+
+                    <span class="guide-address">
+                        H1
+                    </span>
+
+                    <span class="guide-text">
+                        Borr ut
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="build-guide-info">
+
+                <div class="build-guide-title">
+
+                    <span class="build-guide-letter">
+                        H
+                    </span>
+
+                    <div>
+                        <strong>
+                            Händelse
+                        </strong>
+
+                        <span>
+                            Vad som ska hända.
+                        </span>
+                    </div>
+
+                </div>
+
+
+                <div class="build-guide-tags">
+
+                    <span>
+                        Utgång
+                    </span>
+
+                    <span>
+                        Timer
+                    </span>
+
+                    <span>
+                        Räknare
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================================
+             ÖVERGÅNG
+        ========================================== -->
+
+        <div class="build-guide-card">
+
+            <div class="build-guide-visual">
+
+                <div class="guide-transition guide-transition-large">
+
+                    <span class="guide-address">
+                        X0
+                    </span>
+
+                    <span class="guide-text">
+                        Borr ute
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="build-guide-info">
+
+                <div class="build-guide-title">
+
+                    <span class="build-guide-letter">
+                        X
+                    </span>
+
+                    <div>
+                        <strong>
+                            Övergång
+                        </strong>
+
+                        <span>
+                            Villkoret för att gå vidare.
+                        </span>
+                    </div>
+
+                </div>
+
+
+                <div class="build-guide-tags">
+
+                    <span>
+                        Ingång
+                    </span>
+
+                    <span>
+                        Villkor
+                    </span>
+
+                    <span>
+                        NO / NC
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================================
+             GRUNDREGEL
+        ========================================== -->
+
+        <div class="build-rule">
+
+            <span class="build-rule-label">
+                Grundregel
+            </span>
+
+
+            <div class="build-rule-flow">
+
+                <span class="build-rule-h">
+                    Händelse
+                </span>
+
+                <span class="build-rule-arrow">
+                    →
+                </span>
+
+                <span class="build-rule-x">
+                    Övergång
+                </span>
+
+                <span class="build-rule-arrow">
+                    →
+                </span>
+
+                <span class="build-rule-h">
+                    Händelse
+                </span>
+
+                <span class="build-rule-arrow">
+                    →
+                </span>
+
+                <span class="build-rule-x">
+                    Övergång
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================================
+             LÄGG TILL
+        ========================================== -->
+
+        <div class="build-buttons-guide">
+
+            <div class="build-button-example">
+
+                <button
+                    type="button"
+                    tabindex="-1"
+                >
+                    + Händelse
+                </button>
+
+                <span>
+                    Lägger till en Händelse.
+                </span>
+
+            </div>
+
+
+            <div class="build-button-example">
+
+                <button
+                    type="button"
+                    tabindex="-1"
+                >
+                    + Övergång
+                </button>
+
+                <span>
+                    Lägger till en Övergång.
+                </span>
+
+            </div>
+
+
+            <div class="build-button-example build-button-primary">
+
+                <button
+                    type="button"
+                    tabindex="-1"
+                >
+                    + Lägg till sekvens
+                </button>
+
+                <span>
+                    Lägger till båda.
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================================
+             BYGGPUNKT
+        ========================================== -->
+
+        <div class="build-point-guide">
+
+            <div class="build-point-example">
+
+                <div class="build-point-object">
+
+                    <span>
+                        H2
+                    </span>
+
+                    <strong>
+                        Borr in
+                    </strong>
+
+                </div>
+
+
+                <div class="build-point-marker">
+                    ✓
+                </div>
+
+            </div>
+
+
+            <div class="build-point-info">
+
+                <strong>
+                    Byggpunkt
+                </strong>
+
+                <span>
+                    Markera objektet där du vill fortsätta bygga.
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================================
+             SNABBREGEL
+        ========================================== -->
+
+        <div class="build-bottom-rule">
+
+            <span>
+                1
+            </span>
+
+            Markera byggpunkt
+
+            <strong>→</strong>
+
+            <span>
+                2
+            </span>
+
+            Välj vad du vill lägga till
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<section
+    id="instructionBranches"
+    class="instruction-section instruction-branches-section"
+>
+
+    <div class="instruction-number">
+        3
+    </div>
+
+    <div class="instruction-main">
+
+        <div class="instruction-section-heading">
+
+            <h2>
+                Grenar
+            </h2>
+
+            <p>
+                Dela sekvensen i flera vägar.
+            </p>
+
+        </div>
+
+
+        <!-- =========================================
+             ALTERNATIV / PARALLELL
+        ========================================== -->
+
+        <div class="branch-type-grid">
+
+
+            <!-- ALTERNATIVGREN -->
+
+            <div class="branch-guide-card">
+
+                <div class="branch-guide-heading">
+
+                    <strong>
+                        Alternativgren
+                    </strong>
+
+                    <span>
+                        En väg väljs.
+                    </span>
+
+                </div>
+
+
+                <div class="branch-diagram">
+
+                    <div class="branch-box branch-h">
+                        H1
+                    </div>
+
+                    <div class="branch-line-down"></div>
+
+
+                    <div class="branch-split branch-split-single">
+
+                        <div class="branch-path branch-path-main">
+
+                            <div class="branch-box branch-x">
+                                X1
+                            </div>
+
+                            <div class="branch-line-down short"></div>
+
+                            <div class="branch-box branch-h">
+                                H2
+                            </div>
+
+                        </div>
+
+
+                        <div class="branch-path branch-path-side">
+
+                            <div class="branch-box branch-x">
+                                X2
+                            </div>
+
+                            <div class="branch-line-down short"></div>
+
+                            <div class="branch-box branch-h">
+                                H3
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="branch-rejoin branch-rejoin-single">
+                    </div>
+
+
+                    <div class="branch-line-down"></div>
+
+                    <div class="branch-box branch-x">
+                        X3
+                    </div>
+
+                </div>
+
+
+                <div class="branch-mini-rule">
+                    Olika villkor → olika väg
+                </div>
+
+            </div>
+
+
+            <!-- PARALLELLGREN -->
+
+            <div class="branch-guide-card">
+
+                <div class="branch-guide-heading">
+
+                    <strong>
+                        Parallellgren
+                    </strong>
+
+                    <span>
+                        Flera vägar körs samtidigt.
+                    </span>
+
+                </div>
+
+
+                <div class="branch-diagram">
+
+                    <div class="branch-box branch-x">
+                        X1
+                    </div>
+
+                    <div class="branch-line-down"></div>
+
+
+                    <div class="branch-split branch-split-double">
+
+                        <div class="branch-path branch-path-main">
+
+                            <div class="branch-box branch-h">
+                                H2
+                            </div>
+
+                            <div class="branch-line-down short"></div>
+
+                            <div class="branch-box branch-x">
+                                X2
+                            </div>
+
+                        </div>
+
+
+                        <div class="branch-path branch-path-side">
+
+                            <div class="branch-box branch-h">
+                                H3
+                            </div>
+
+                            <div class="branch-line-down short"></div>
+
+                            <div class="branch-box branch-x">
+                                X3
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="branch-rejoin branch-rejoin-double">
+                    </div>
+
+
+                    <div class="branch-line-down"></div>
+
+                    <div class="branch-box branch-h">
+                        H4
+                    </div>
+
+                </div>
+
+
+                <div class="branch-mini-rule">
+                    Dubbelstreck = parallellt
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================================
+             SKILLNADEN
+        ========================================== -->
+
+        <div class="branch-difference">
+
+            <div>
+
+                <span class="branch-symbol-single">
+                    ─
+                </span>
+
+                <strong>
+                    Alternativ
+                </strong>
+
+                <span>
+                    välj en väg
+                </span>
+
+            </div>
+
+
+            <div class="branch-difference-arrow">
+                ≠
+            </div>
+
+
+            <div>
+
+                <span class="branch-symbol-double">
+                    ═
+                </span>
+
+                <strong>
+                    Parallell
+                </strong>
+
+                <span>
+                    kör flera samtidigt
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================================
+             KOPPLA GREN
+        ========================================== -->
+
+        <div class="branch-reconnect-guide">
+
+            <div class="branch-reconnect-visual">
+
+                <div class="branch-reconnect-main">
+
+                    <div class="branch-box branch-h">
+                        H4
+                    </div>
+
+                    <div class="branch-reconnect-main-line">
+                    </div>
+
+                    <div class="branch-box branch-x">
+                        X4
+                    </div>
+
+                </div>
+
+
+                <div class="branch-reconnect-side">
+
+                    <div class="branch-box branch-h">
+                        H5
+                    </div>
+
+                    <div class="branch-reconnect-route">
+                        ←
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="branch-reconnect-info">
+
+                <button
+                    type="button"
+                    tabindex="-1"
+                >
+                    Koppla gren
+                </button>
+
+                <strong>
+                    Avsluta grenen
+                </strong>
+
+                <span>
+                    Välj var grenen ska kopplas tillbaka.
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================================
+             BYGGA VIDARE I GREN
+        ========================================== -->
+
+        <div class="branch-build-rule">
+
+            <span class="branch-build-number">
+                1
+            </span>
+
+            Markera objekt i grenen
+
+            <strong>→</strong>
+
+            <span class="branch-build-number">
+                2
+            </span>
+
+            Bygg vidare
+
+            <strong>→</strong>
+
+            <span class="branch-build-number">
+                3
+            </span>
+
+            Koppla gren
+
+        </div>
+
+
+        <!-- =========================================
+             BORTKOPPLAD GRENSTART
+        ========================================== -->
+
+        <div class="branch-warning-guide">
+
+            <div class="branch-warning-visual">
+
+                <div class="branch-warning-diagram">
+
+                    <div class="branch-box branch-h">
+                        H1
+                    </div>
+
+                    <div class="branch-warning-main-line">
+                    </div>
+
+
+                    <div class="branch-warning-broken">
+
+                        <span class="branch-broken-mark">
+                            ×
+                        </span>
+
+                        <div class="branch-box branch-x">
+                            X2
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="branch-warning-info">
+
+                <div class="branch-warning-title">
+
+                    <span>
+                        ⚠
+                    </span>
+
+                    <strong>
+                        Grenstart bortkopplad?
+                    </strong>
+
+                </div>
+
+
+                <div class="branch-warning-steps">
+
+                    <span>
+                        Varningar
+                    </span>
+
+                    <strong>
+                        →
+                    </strong>
+
+                    <span class="branch-warning-show">
+                        Visa
+                    </span>
+
+                    <strong>
+                        →
+                    </strong>
+
+                    <span>
+                        Fixa grenen
+                    </span>
+
+                </div>
+
+
+                <small>
+                    The Sequencer visar var felet finns.
+                </small>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================================
+             SNABBREGEL
+        ========================================== -->
+
+        <div class="branch-bottom-tip">
+
+            <strong>
+                Tips:
+            </strong>
+
+            Markera alltid objektet där du vill fortsätta bygga.
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<section
+    id="instructionIO"
+    class="instruction-section instruction-io-section"
+>
+
+    <div class="instruction-number">
+        4
+    </div>
+
+    <div class="instruction-main">
+
+        <div class="instruction-section-heading">
+
+            <h2>
+                I/O
+            </h2>
+
+            <p>
+                Adresser, utgångar, timer och räknare.
+            </p>
+
+        </div>
+
+
+        <!-- =========================================
+             ADRESSER
+        ========================================== -->
+
+        <div class="io-guide-addresses">
+
+            <div class="io-address-card">
+
+                <span class="io-address-letter">
+                    X
+                </span>
+
+                <strong>
+                    Ingång
+                </strong>
+
+                <small>
+                    X0
+                </small>
+
+            </div>
+
+
+            <div class="io-address-card">
+
+                <span class="io-address-letter">
+                    Y
+                </span>
+
+                <strong>
+                    Utgång
+                </strong>
+
+                <small>
+                    Y0
+                </small>
+
+            </div>
+
+
+            <div class="io-address-card">
+
+                <span class="io-address-letter">
+                    M
+                </span>
+
+                <strong>
+                    Minne
+                </strong>
+
+                <small>
+                    M1
+                </small>
+
+            </div>
+
+
+            <div class="io-address-card">
+
+                <span class="io-address-letter">
+                    T
+                </span>
+
+                <strong>
+                    Timer
+                </strong>
+
+                <small>
+                    T0
+                </small>
+
+            </div>
+
+
+            <div class="io-address-card">
+
+                <span class="io-address-letter">
+                    C
+                </span>
+
+                <strong>
+                    Räknare
+                </strong>
+
+                <small>
+                    C0
+                </small>
+
+            </div>
+
+        </div>
+
+
+        <div class="io-custom-address-tip">
+
+            <strong>
+                Fler adresser fungerar också
+            </strong>
+
+            <span>
+                AI0 · AQ0 · D10 · R2 · …
+            </span>
+
+        </div>
+
+
+        <!-- =========================================
+             I/O-LISTA
+        ========================================== -->
+
+        <div class="io-list-guide">
+
+            <div class="io-list-visual">
+
+                <div class="io-list-fake-header">
+
+                    <strong>
+                        I/O-lista
+                    </strong>
+
+                </div>
+
+
+                <div class="io-list-fake-row">
+
+                    <span class="io-list-address">
+                        X0
+                    </span>
+
+                    <span class="io-list-description">
+                        Borr ute
+                    </span>
+
+                </div>
+
+
+                <div class="io-list-fake-row">
+
+                    <span class="io-list-address">
+                        Y0
+                    </span>
+
+                    <span class="io-list-description">
+                        Borrmotor
+                    </span>
+
+                </div>
+
+
+                <div class="io-list-fake-row">
+
+                    <span class="io-list-address">
+                        X1
+                    </span>
+
+                    <span class="io-list-description">
+                        Borr inne
+                    </span>
+
+                </div>
+
+
+                <div class="io-list-fake-add">
+                    + Lägg till
+                </div>
+
+            </div>
+
+
+            <div class="io-list-info">
+
+                <strong>
+                    I/O-listan
+                </strong>
+
+                <span>
+                    Adress + beskrivning
+                </span>
+
+
+                <div class="io-list-example">
+
+                    <span>
+                        X0
+                    </span>
+
+                    <strong>
+                        =
+                    </strong>
+
+                    <span>
+                        Borr ute
+                    </span>
+
+                </div>
+
+
+                <small>
+                    Beskrivningen visas även i Ladder.
+                </small>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================================
+             SNABB-I/O
+        ========================================== -->
+
+        <div class="io-quick-guide">
+
+            <div>
+
+                <strong>
+                    Snabb-I/O
+                </strong>
+
+                <span>
+                    Lägg till direkt från sidopanelen.
+                </span>
+
+            </div>
+
+
+            <div class="io-quick-example">
+
+                <span>
+                    Y2
+                </span>
+
+                <span>
+                    Lampa
+                </span>
+
+                <button
+                    type="button"
+                    tabindex="-1"
+                >
+                    +
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================================
+             FLERA UTGÅNGAR
+        ========================================== -->
+
+        <div class="io-feature-card">
+
+            <div class="io-feature-visual">
+
+                <div class="guide-step io-step-example">
+
+                    <span class="guide-address">
+                        H2
+                    </span>
+
+                    <div class="io-step-content">
+
+                        <strong>
+                            Kör maskin
+                        </strong>
+
+                        <span>
+                            Y0, Y1, Y2
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="io-feature-info">
+
+                <strong>
+                    Flera utgångar
+                </strong>
+
+                <span>
+                    Skriv flera Y-adresser i samma Händelse.
+                </span>
+
+                <div class="io-inline-example">
+                    Y0, Y1, Y2
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================================
+             TIMER
+        ========================================== -->
+
+        <div class="io-feature-card">
+
+            <div class="io-feature-visual">
+
+                <div class="io-timer-box">
+
+                    <div class="io-function-title">
+                        TIMER
+                    </div>
+
+                    <div class="io-function-row">
+
+                        <span>
+                            T0
+                        </span>
+
+                        <strong>
+                            10
+                        </strong>
+
+                    </div>
+
+                    <div class="io-function-result">
+                        = 1,0 s
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="io-feature-info">
+
+                <strong>
+                    Timer
+                </strong>
+
+                <span>
+                    Fördröjer ett villkor.
+                </span>
+
+
+                <div class="io-timer-scale">
+
+                    <span>
+                        10
+                    </span>
+
+                    <strong>
+                        →
+                    </strong>
+
+                    <span>
+                        1,0 sekund
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================================
+             RÄKNARE
+        ========================================== -->
+
+        <div class="io-feature-card">
+
+            <div class="io-feature-visual">
+
+                <div class="io-counter-box">
+
+                    <div class="io-function-title">
+                        RÄKNARE
+                    </div>
+
+                    <div class="io-function-row">
+
+                        <span>
+                            C0
+                        </span>
+
+                        <strong>
+                            5
+                        </strong>
+
+                    </div>
+
+                    <div class="io-function-result">
+                        5 pulser
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="io-feature-info">
+
+                <strong>
+                    Räknare
+                </strong>
+
+                <span>
+                    Räknar hur många gånger ett villkor inträffar.
+                </span>
+
+
+                <div class="io-timer-scale">
+
+                    <span>
+                        C0 = 5
+                    </span>
+
+                    <strong>
+                        →
+                    </strong>
+
+                    <span>
+                        klar efter 5
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================================
+             VARNINGAR
+        ========================================== -->
+
+        <div class="io-warning-guide">
+
+            <div class="io-warning-heading">
+
+                <span>
+                    ⚠
+                </span>
+
+                <strong>
+                    I/O-varningar
+                </strong>
+
+            </div>
+
+
+            <div class="io-warning-items">
+
+                <span>
+                    Dublett
+                </span>
+
+                <span>
+                    Adress saknas
+                </span>
+
+                <span>
+                    Beskrivning saknas
+                </span>
+
+                <span>
+                    Tom rad
+                </span>
+
+            </div>
+
+
+            <small>
+                Varningar → Visa för att hitta posten.
+            </small>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<section
+    id="instructionLadder"
+    class="instruction-section instruction-ladder-section"
+>
+
+    <div class="instruction-number">
+        5
+    </div>
+
+    <div class="instruction-main">
+
+        <div class="instruction-section-heading">
+
+            <h2>
+                Ladder
+            </h2>
+
+            <p>
+                Så läser du den genererade PLC-koden.
+            </p>
+
+        </div>
+
+
+        <!-- =========================================
+             LADDER - GRUND
+        ========================================== -->
+
+        <div class="ladder-read-guide">
+
+            <div class="ladder-read-symbol">
+
+                <div class="ladder-symbol-contact">
+                    <span></span>
+                </div>
+
+                <strong>
+                    Kontakt
+                </strong>
+
+                <small>
+                    Villkor
+                </small>
+
+            </div>
+
+
+            <div class="ladder-read-symbol">
+
+                <div class="ladder-symbol-contact ladder-symbol-nc">
+                    <span></span>
+                </div>
+
+                <strong>
+                    NC-kontakt
+                </strong>
+
+                <small>
+                    Omvänt villkor
+                </small>
+
+            </div>
+
+
+            <div class="ladder-read-symbol">
+
+<div class="instruction-coil instruction-coil-small">
+    SET
+</div>
+
+                <small>
+                    Aktivera
+                </small>
+
+            </div>
+
+
+            <div class="ladder-read-symbol">
+
+<div class="instruction-coil instruction-coil-small">
+    RST
+</div>
+
+                <small>
+                    Återställ
+                </small>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================================
+             HUVUDMALL
+        ========================================== -->
+
+        <div class="ladder-template-card">
+
+            <div class="ladder-template-heading">
+
+                <strong>
+                    Så byggs varje steg
+                </strong>
+
+                <span>
+                    Läs båda raderna som ”detta steg”.
+                </span>
+
+            </div>
+
+
+            <div class="ladder-template">
+
+
+                <!-- RST RAD -->
+
+                <div class="instruction-template-rung">
+
+                    <div class="ladder-rail"></div>
+
+                    <div class="ladder-contact-block">
+
+                        <span class="ladder-code-label">
+                            Nästa steg
+                        </span>
+
+                        <div class="instruction-template-contact">
+                            <span></span>
+                        </div>
+
+                    </div>
+
+
+                    <div class="instruction-template-wire"></div>
+
+
+                    <div class="ladder-coil-block">
+
+                        <span class="ladder-code-label">
+                            Detta steg
+                        </span>
+
+<div class="instruction-ladder-coil">
+    RST
+</div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- SET RAD -->
+
+                <div class="instruction-template-rung">
+
+                    <div class="ladder-rail"></div>
+
+
+                    <div class="ladder-contact-block">
+
+                        <span class="ladder-code-label">
+                            Föregående steg
+                        </span>
+
+                        <div class="instruction-template-contact">
+                            <span></span>
+                        </div>
+
+                    </div>
+
+
+                    <div class="instruction-template-wire instruction-template-wire-small">
+                    </div>
+
+
+                    <div class="ladder-contact-block">
+
+                        <span class="ladder-code-label">
+                            Villkor
+                        </span>
+
+                        <div class="instruction-template-contact">
+                            <span></span>
+                        </div>
+
+                    </div>
+
+
+                    <div class="instruction-template-wire"></div>
+
+
+                    <div class="ladder-coil-block">
+
+                        <span class="ladder-code-label">
+                            Detta steg
+                        </span>
+
+<div class="instruction-ladder-coil">
+    SET
+</div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="ladder-template-rules">
+
+                <div>
+
+                    <span class="ladder-rule-number">
+                        1
+                    </span>
+
+                    <strong>
+                        Nästa steg
+                    </strong>
+
+                    <span>
+                        →
+                    </span>
+
+                    <strong>
+                        RST detta steg
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span class="ladder-rule-number">
+                        2
+                    </span>
+
+                    <strong>
+                        Föregående steg + villkor
+                    </strong>
+
+                    <span>
+                        →
+                    </span>
+
+                    <strong>
+                        SET detta steg
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+<!-- =========================================
+     KONKRET EXEMPEL
+========================================== -->
+
+<div class="ladder-example-card">
+
+    <!-- =====================================
+         ÖVRE DEL
+    ====================================== -->
+
+    <div class="ladder-example-top">
+
+        <!-- ===============================
+             SEKVENS
+        ================================ -->
+
+        <div class="ladder-example-sequence">
+
+            <div class="ladder-example-subtitle">
+                Sekvens
+            </div>
+
+
+            <div class="guide-step ladder-example-step ladder-example-start">
+
+                <span class="guide-address">
+                    M0
+                </span>
+
+                <span class="guide-text">
+                    START
+                </span>
+
+            </div>
+
+
+            <div class="ladder-example-start-note">
+                Ingen händelse på START
+            </div>
+
+
+            <div class="ladder-example-line"></div>
+
+
+            <div class="guide-transition ladder-example-transition ladder-example-empty-transition">
+
+                <span class="guide-address">
+                    X0
+                </span>
+
+                <span class="guide-text">
+                    Tom övergång
+                </span>
+
+            </div>
+
+
+            <div class="ladder-example-line"></div>
+
+
+            <div class="guide-step ladder-example-step">
+
+                <span class="guide-address">
+                    M1
+                </span>
+
+                <span class="guide-text">
+                    Borr gå fram
+                </span>
+
+            </div>
+
+
+            <div class="ladder-example-line"></div>
+
+
+            <div class="guide-transition ladder-example-transition">
+
+                <span class="guide-address">
+                    X1
+                </span>
+
+                <span class="guide-text">
+                    Borr framme
+                </span>
+
+            </div>
+
+
+            <div class="ladder-example-line"></div>
+
+
+            <div class="guide-step ladder-example-step">
+
+                <span class="guide-address">
+                    M2
+                </span>
+
+                <span class="guide-text">
+                    Borr aktiv
+                </span>
+
+            </div>
+
+
+            <div class="ladder-example-line"></div>
+
+
+            <div class="guide-transition ladder-example-transition">
+
+                <span class="guide-address">
+                    X2
+                </span>
+
+                <span class="guide-text">
+                    Bearbetning klar
+                </span>
+
+            </div>
+
+
+            <div class="ladder-example-line"></div>
+
+
+            <div class="guide-step ladder-example-step">
+
+                <span class="guide-address">
+                    M3
+                </span>
+
+                <span class="guide-text">
+                    Borr gå tillbaka
+                </span>
+
+            </div>
+
+
+            <div class="ladder-example-line"></div>
+
+
+            <div class="guide-transition ladder-example-transition">
+
+                <span class="guide-address">
+                    X3
+                </span>
+
+                <span class="guide-text">
+                    Borr tillbaka
+                </span>
+
+            </div>
+
+
+            <div class="ladder-example-loop">
+
+                <strong>
+                    ↩
+                </strong>
+
+                <span>
+                    Loop till START
+                </span>
+
+            </div>
+
+
+            <div class="ladder-example-start-rule">
+
+                <strong>
+                    START
+                </strong>
+
+                <span>
+                    Lägg aldrig en händelse på START.
+                    M0 används bara som startsteg.
+                    Första händelsen börjar på M1.
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- ===============================
+             LADDER
+        ================================ -->
+
+        <div class="ladder-example-code">
+
+            <div class="ladder-example-subtitle">
+                Samma sekvens i Ladder
+            </div>
+
+
+            <!-- ===========================
+                 M0
+            ============================ -->
+
+            <div class="ladder-example-step-title">
+                M0 · START
+            </div>
+
+
+            <!-- RST M0 -->
+
+            <div class="ladder-mini-rung">
+
+                <div class="ladder-mini-contact">
+
+                    <span class="ladder-mini-description">
+                        Borr gå fram
+                    </span>
+
+                    <strong class="ladder-mini-address">
+                        M1
+                    </strong>
+
+                    <div class="ladder-mini-contact-symbol"></div>
+
+                </div>
+
+
+                <div class="ladder-mini-wire"></div>
+
+
+                <div class="instruction-mini-coil">
+
+                    <span class="ladder-mini-description">
+                        Start
+                    </span>
+
+                    <div class="instruction-coil">
+                        RST M0
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- GEMENSAM SET M0 -->
+
+            <div class="ladder-branch-rung">
+
+                <div class="ladder-set-branches">
+
+                    <!-- M8002 -->
+
+                    <div class="ladder-set-branch">
+
+                        <div class="ladder-mini-contact">
+
+                            <span class="ladder-mini-description">
+                                Första scan
+                            </span>
+
+                            <strong class="ladder-mini-address">
+                                M8002
+                            </strong>
+
+                            <div class="ladder-mini-contact-symbol"></div>
+
+                        </div>
+
+                        <div class="ladder-mini-wire"></div>
+
+                    </div>
+
+
+                    <!-- LOOP M3 + X3 -->
+
+                    <div class="ladder-set-branch">
+
+                        <div class="ladder-mini-contact">
+
+                            <span class="ladder-mini-description">
+                                Borr gå tillbaka
+                            </span>
+
+                            <strong class="ladder-mini-address">
+                                M3
+                            </strong>
+
+                            <div class="ladder-mini-contact-symbol"></div>
+
+                        </div>
+
+
+                        <div class="ladder-mini-wire ladder-mini-wire-short"></div>
+
+
+                        <div class="ladder-mini-contact">
+
+                            <span class="ladder-mini-description">
+                                Borr tillbaka
+                            </span>
+
+                            <strong class="ladder-mini-address">
+                                X3
+                            </strong>
+
+                            <div class="ladder-mini-contact-symbol"></div>
+
+                        </div>
+
+
+                        <div class="ladder-mini-wire"></div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="ladder-branch-join"></div>
+
+
+                <div class="instruction-mini-coil">
+
+                    <span class="ladder-mini-description">
+                        Start
+                    </span>
+
+                    <div class="instruction-coil">
+                        SET M0
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="ladder-example-loop-note">
+                M8002 startar sekvensen · M3 + X3 loopar tillbaka
+            </div>
+
+
+            <!-- ===========================
+                 M1
+            ============================ -->
+
+            <div class="ladder-example-step-title">
+                M1 · Borr gå fram
+            </div>
+
+
+            <!-- RST M1 -->
+
+            <div class="ladder-mini-rung">
+
+                <div class="ladder-mini-contact">
+
+                    <span class="ladder-mini-description">
+                        Borr aktiv
+                    </span>
+
+                    <strong class="ladder-mini-address">
+                        M2
+                    </strong>
+
+                    <div class="ladder-mini-contact-symbol"></div>
+
+                </div>
+
+
+                <div class="ladder-mini-wire"></div>
+
+
+                <div class="instruction-mini-coil">
+
+                    <span class="ladder-mini-description">
+                        Borr gå fram
+                    </span>
+
+                    <div class="instruction-coil">
+                        RST M1
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- SET M1 -->
+
+            <div class="ladder-mini-rung">
+
+                <div class="ladder-mini-contact">
+
+                    <span class="ladder-mini-description">
+                        Start
+                    </span>
+
+                    <strong class="ladder-mini-address">
+                        M0
+                    </strong>
+
+                    <div class="ladder-mini-contact-symbol"></div>
+
+                </div>
+
+
+                <div class="ladder-mini-wire"></div>
+
+
+                <div class="instruction-mini-coil">
+
+                    <span class="ladder-mini-description">
+                        Borr gå fram
+                    </span>
+
+                    <div class="instruction-coil">
+                        SET M1
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="ladder-example-empty-note">
+                X0 är tom → M0 aktiverar M1 direkt.
+            </div>
+
+
+            <!-- ===========================
+                 M2
+            ============================ -->
+
+            <div class="ladder-example-step-title">
+                M2 · Borr aktiv
+            </div>
+
+
+            <!-- RST M2 -->
+
+            <div class="ladder-mini-rung">
+
+                <div class="ladder-mini-contact">
+
+                    <span class="ladder-mini-description">
+                        Borr gå tillbaka
+                    </span>
+
+                    <strong class="ladder-mini-address">
+                        M3
+                    </strong>
+
+                    <div class="ladder-mini-contact-symbol"></div>
+
+                </div>
+
+
+                <div class="ladder-mini-wire"></div>
+
+
+                <div class="instruction-mini-coil">
+
+                    <span class="ladder-mini-description">
+                        Borr aktiv
+                    </span>
+
+                    <div class="instruction-coil">
+                        RST M2
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- SET M2 -->
+
+            <div class="ladder-mini-rung">
+
+                <div class="ladder-mini-contact">
+
+                    <span class="ladder-mini-description">
+                        Borr gå fram
+                    </span>
+
+                    <strong class="ladder-mini-address">
+                        M1
+                    </strong>
+
+                    <div class="ladder-mini-contact-symbol"></div>
+
+                </div>
+
+
+                <div class="ladder-mini-wire ladder-mini-wire-short"></div>
+
+
+                <div class="ladder-mini-contact">
+
+                    <span class="ladder-mini-description">
+                        Borr framme
+                    </span>
+
+                    <strong class="ladder-mini-address">
+                        X1
+                    </strong>
+
+                    <div class="ladder-mini-contact-symbol"></div>
+
+                </div>
+
+
+                <div class="ladder-mini-wire"></div>
+
+
+                <div class="instruction-mini-coil">
+
+                    <span class="ladder-mini-description">
+                        Borr aktiv
+                    </span>
+
+                    <div class="instruction-coil">
+                        SET M2
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ===========================
+                 M3
+            ============================ -->
+
+            <div class="ladder-example-step-title">
+                M3 · Borr gå tillbaka
+            </div>
+
+
+            <!-- RST M3 -->
+
+            <div class="ladder-mini-rung">
+
+                <div class="ladder-mini-contact">
+
+                    <span class="ladder-mini-description">
+                        Start
+                    </span>
+
+                    <strong class="ladder-mini-address">
+                        M0
+                    </strong>
+
+                    <div class="ladder-mini-contact-symbol"></div>
+
+                </div>
+
+
+                <div class="ladder-mini-wire"></div>
+
+
+                <div class="instruction-mini-coil">
+
+                    <span class="ladder-mini-description">
+                        Borr gå tillbaka
+                    </span>
+
+                    <div class="instruction-coil">
+                        RST M3
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- SET M3 -->
+
+            <div class="ladder-mini-rung">
+
+                <div class="ladder-mini-contact">
+
+                    <span class="ladder-mini-description">
+                        Borr aktiv
+                    </span>
+
+                    <strong class="ladder-mini-address">
+                        M2
+                    </strong>
+
+                    <div class="ladder-mini-contact-symbol"></div>
+
+                </div>
+
+
+                <div class="ladder-mini-wire ladder-mini-wire-short"></div>
+
+
+                <div class="ladder-mini-contact">
+
+                    <span class="ladder-mini-description">
+                        Bearbetning klar
+                    </span>
+
+                    <strong class="ladder-mini-address">
+                        X2
+                    </strong>
+
+                    <div class="ladder-mini-contact-symbol"></div>
+
+                </div>
+
+
+                <div class="ladder-mini-wire"></div>
+
+
+                <div class="instruction-mini-coil">
+
+                    <span class="ladder-mini-description">
+                        Borr gå tillbaka
+                    </span>
+
+                    <div class="instruction-coil">
+                        SET M3
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================
+         I/O-LISTA UNDER BÅDA
+    ====================================== -->
+
+    <div class="ladder-example-io">
+
+        <div class="ladder-example-subtitle">
+            I/O-lista
+        </div>
+
+
+        <div class="ladder-example-io-grid">
+
+            <div class="ladder-example-io-row">
+
+                <strong>
+                    X1
+                </strong>
+
+                <span>
+                    Borr framme
+                </span>
+
+            </div>
+
+
+            <div class="ladder-example-io-row">
+
+                <strong>
+                    X2
+                </strong>
+
+                <span>
+                    Bearbetning klar
+                </span>
+
+            </div>
+
+
+            <div class="ladder-example-io-row">
+
+                <strong>
+                    X3
+                </strong>
+
+                <span>
+                    Borr tillbaka
+                </span>
+
+            </div>
+
+
+            <div class="ladder-example-io-row">
+
+                <strong>
+                    M1
+                </strong>
+
+                <span>
+                    Borr gå fram
+                </span>
+
+            </div>
+
+
+            <div class="ladder-example-io-row">
+
+                <strong>
+                    M2
+                </strong>
+
+                <span>
+                    Borr aktiv
+                </span>
+
+            </div>
+
+
+            <div class="ladder-example-io-row">
+
+                <strong>
+                    M3
+                </strong>
+
+                <span>
+                    Borr gå tillbaka
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="ladder-example-io-note">
+            M0 är START och behöver inte läggas i I/O-listan.
+        </div>
+
+    </div>
+
+</div>
+
+        <!-- =========================================
+             START
+        ========================================== -->
+
+        <div class="ladder-special-card">
+
+            <div class="ladder-special-heading">
+
+                <strong>
+                    START
+                </strong>
+
+                <span>
+                    Sekvensens första steg.
+                </span>
+
+            </div>
+
+
+            <div class="ladder-start-visual">
+
+                <div class="ladder-mini-contact">
+
+                    <span>
+                        M8002
+                    </span>
+
+                    <div class="ladder-mini-contact-symbol">
+                    </div>
+
+                </div>
+
+
+                <div class="ladder-mini-wire">
+                </div>
+
+
+<div class="instruction-mini-coil">
+
+    <span>
+        M0
+    </span>
+
+    <div class="instruction-coil">
+        SET M0
+    </div>
+
+</div>
+            </div>
+
+
+            <div class="ladder-special-rule">
+
+                <strong>
+                    M8002
+                </strong>
+
+                →
+
+                <strong>
+                    SET M0
+                </strong>
+
+                <span>
+                    vid PLC-start
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================================
+             LOOP
+        ========================================== -->
+
+        <div class="ladder-special-card">
+
+            <div class="ladder-special-heading">
+
+                <strong>
+                    Loop till START
+                </strong>
+
+                <span>
+                    Sista villkoret startar M0 igen.
+                </span>
+
+            </div>
+
+
+            <div class="ladder-loop-example">
+
+                <span>
+                    Sista steg
+                </span>
+
+                <strong>
+                    +
+                </strong>
+
+                <span>
+                    Villkor
+                </span>
+
+                <strong>
+                    →
+                </strong>
+
+                <span class="ladder-loop-result">
+                    SET M0
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================================
+             UTGÅNGAR
+        ========================================== -->
+
+        <div class="ladder-operation-card">
+
+            <div class="ladder-operation-visual">
+
+                <div class="ladder-mini-contact">
+
+                    <span>
+                        M2
+                    </span>
+
+                    <div class="ladder-mini-contact-symbol">
+                    </div>
+
+                </div>
+
+
+                <div class="ladder-mini-wire">
+                </div>
+
+
+<div class="instruction-mini-coil">
+
+    <span>
+        Y0
+    </span>
+
+    <div class="instruction-coil">
+        Y0
+    </div>
+
+</div>
+
+            </div>
+
+
+            <div class="ladder-operation-info">
+
+                <strong>
+                    Utgång
+                </strong>
+
+                <span>
+                    Aktivt steg driver sin Y-utgång.
+                </span>
+
+
+                <div class="ladder-operation-rule">
+
+                    M2 aktiv
+
+                    <strong>
+                        →
+                    </strong>
+
+                    Y0 aktiv
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+<!-- =========================================
+     TIMER
+========================================== -->
+
+<div class="ladder-operation-card ladder-timer-card">
+
+    <div class="ladder-operation-visual ladder-operation-column">
+
+        <div class="ladder-timer-rung">
+
+            <div class="ladder-mini-contact">
+
+                <span>
+                    M1
+                </span>
+
+                <small>
+                    Vänta
+                </small>
+
+                <div class="ladder-mini-contact-symbol">
+                </div>
+
+            </div>
+
+
+            <div class="ladder-mini-wire">
+            </div>
+
+
+            <div class="instruction-real-function-block">
+
+                <div class="instruction-function-title">
+                    TON T0
+                </div>
+
+
+                <div class="instruction-function-body">
+
+                    <span class="instruction-function-pin">
+                        IN
+                    </span>
+
+                    <span class="instruction-function-value">
+                        M1
+                    </span>
+
+
+                    <span class="instruction-function-pin">
+                        Q
+                    </span>
+
+                    <span class="instruction-function-value">
+                        T0
+                    </span>
+
+
+                    <span class="instruction-function-pin">
+                        PT
+                    </span>
+
+                    <span class="instruction-function-value">
+                        10
+                    </span>
+
+                </div>
+
+
+                <div class="instruction-function-hint">
+                    1,0 s
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="ladder-timer-arrow">
+            ↓
+        </div>
+
+
+        <div class="ladder-timer-rung">
+
+            <div class="ladder-mini-contact">
+
+                <span>
+                    T0
+                </span>
+
+                <small>
+                    Timer klar
+                </small>
+
+                <div class="ladder-mini-contact-symbol">
+                </div>
+
+            </div>
+
+
+            <div class="ladder-mini-wire">
+            </div>
+
+
+            <div class="ladder-small-result">
+                Villkor sant
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="ladder-operation-info">
+
+        <strong>
+            Timer
+        </strong>
+
+        <span>
+            Timern räknar medan villkoret är aktivt.
+        </span>
+
+
+        <div class="ladder-timer-read">
+
+            <div>
+
+                <span>
+                    T0
+                </span>
+
+                <strong>
+                    Timer 0
+                </strong>
+
+            </div>
+
+
+            <div>
+
+                <span>
+                    PT 10
+                </span>
+
+                <strong>
+                    1,0 s
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div class="ladder-operation-rule">
+
+            M1 aktiv
+
+            <strong>
+                →
+            </strong>
+
+            T0 räknar
+
+            <strong>
+                →
+            </strong>
+
+            T0-kontakt sluter
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================
+     RÄKNARE
+========================================== -->
+
+<div class="ladder-operation-card ladder-counter-card">
+
+    <div class="ladder-operation-visual ladder-operation-column">
+
+        <div class="ladder-timer-rung">
+
+            <div class="ladder-mini-contact">
+
+                <span>
+                    X2
+                </span>
+
+                <small>
+                    Puls
+                </small>
+
+                <div class="ladder-mini-contact-symbol">
+                </div>
+
+            </div>
+
+
+            <div class="ladder-mini-wire">
+            </div>
+
+
+            <div class="instruction-real-function-block">
+
+                <div class="instruction-function-title">
+                    CNT C0
+                </div>
+
+
+                <div class="instruction-function-body">
+
+                    <span class="instruction-function-pin">
+                        IN
+                    </span>
+
+                    <span class="instruction-function-value">
+                        X2
+                    </span>
+
+
+                    <span class="instruction-function-pin">
+                        RST
+                    </span>
+
+                    <span class="instruction-function-value">
+                        —
+                    </span>
+
+
+                    <span class="instruction-function-pin">
+                        Q
+                    </span>
+
+                    <span class="instruction-function-value">
+                        C0
+                    </span>
+
+
+                    <span class="instruction-function-pin">
+                        PV
+                    </span>
+
+                    <span class="instruction-function-value">
+                        5
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="ladder-timer-arrow">
+            ↓
+        </div>
+
+
+        <div class="ladder-timer-rung">
+
+            <div class="ladder-mini-contact">
+
+                <span>
+                    C0
+                </span>
+
+                <small>
+                    Räknare klar
+                </small>
+
+                <div class="ladder-mini-contact-symbol">
+                </div>
+
+            </div>
+
+
+            <div class="ladder-mini-wire">
+            </div>
+
+
+            <div class="ladder-small-result">
+                Villkor sant
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="ladder-operation-info">
+
+        <strong>
+            Räknare
+        </strong>
+
+        <span>
+            Räknar pulser från sitt villkor.
+        </span>
+
+
+        <div class="ladder-timer-read">
+
+            <div>
+
+                <span>
+                    C0
+                </span>
+
+                <strong>
+                    Räknare 0
+                </strong>
+
+            </div>
+
+
+            <div>
+
+                <span>
+                    PV 5
+                </span>
+
+                <strong>
+                    5 pulser
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div class="ladder-operation-rule">
+
+            X2 puls
+
+            <strong>
+                →
+            </strong>
+
+            C0 räknar
+
+            <strong>
+                →
+            </strong>
+
+            C0-kontakt sluter vid 5
+
+        </div>
+
+    </div>
+
+</div>
+        <!-- =========================================
+             ADRESSFUSKLAPP
+        ========================================== -->
+
+        <div class="ladder-address-guide">
+
+            <div>
+                <strong>M</strong>
+                <span>Minne / steg</span>
+            </div>
+
+            <div>
+                <strong>X</strong>
+                <span>Ingång</span>
+            </div>
+
+            <div>
+                <strong>Y</strong>
+                <span>Utgång</span>
+            </div>
+
+            <div>
+                <strong>T</strong>
+                <span>Timer</span>
+            </div>
+
+            <div>
+                <strong>C</strong>
+                <span>Räknare</span>
+            </div>
+
+        </div>
+
+
+
+
+    </div>
+
+</section>
+
+
+<section
+    id="instructionControls"
+    class="instruction-section"
+>
+
+    <div class="instruction-number">
+        6
+    </div>
+
+
+    <div class="instruction-section-content">
+
+        <div>
+
+            <h2>
+                Kontroller
+            </h2>
+
+            <p>
+                Markera, flytta, zooma, spara och mer.
+            </p>
+
+        </div>
+
+
+        <div class="controls-guide">
+
+            <div class="controls-guide-intro">
+                De viktigaste kontrollerna när du arbetar i The Sequencer.
+            </div>
+
+
+            <div class="controls-guide-grid">
+
+                <!-- MARKERA -->
+
+                <div class="control-guide-card">
+
+                    <div class="control-guide-visual">
+                        <span class="control-mouse">Dubbelklick</span>
+                    </div>
+
+                    <div class="control-guide-info">
+                        <strong>Markera</strong>
+                        <span>Markera ett objekt.</span>
+                    </div>
+
+                </div>
+
+
+                <!-- MARKERA FLERA -->
+
+                <div class="control-guide-card">
+
+                    <div class="control-guide-visual">
+                        <kbd>Ctrl</kbd>
+                        <span class="control-plus">+</span>
+                        <span class="control-mouse">Dubbelklick</span>
+                    </div>
+
+                    <div class="control-guide-info">
+                        <strong>Markera flera</strong>
+                        <span>Lägg till eller ta bort objekt i markeringen.</span>
+                    </div>
+
+                </div>
+
+
+                <!-- PANORERA -->
+
+                <div class="control-guide-card">
+
+                    <div class="control-guide-visual">
+                        <span class="control-mouse">Vänsterklick</span>
+                        <span class="control-plus">+</span>
+                        <span class="control-drag">Dra</span>
+                    </div>
+
+                    <div class="control-guide-info">
+                        <strong>Panorera</strong>
+                        <span>Flytta arbetsytan.</span>
+                    </div>
+
+                </div>
+
+
+                <!-- ZOOMA -->
+
+                <div class="control-guide-card">
+
+                    <div class="control-guide-visual">
+
+                        <kbd>Ctrl</kbd>
+
+                        <span class="control-plus">+</span>
+
+                        <span class="control-mouse">
+                            Scroll
+                        </span>
+
+                        <span class="control-or">
+                            eller
+                        </span>
+
+                        <span class="control-mouse">
+                            Musplatta
+                        </span>
+
+                    </div>
+
+                    <div class="control-guide-info">
+                        <strong>Zooma</strong>
+                        <span>Zooma in och ut.</span>
+                    </div>
+
+                </div>
+
+
+                <!-- CENTRERA -->
+
+                <div class="control-guide-card">
+
+                    <div class="control-guide-visual">
+
+                        <span class="control-button">
+                            Centrera vy
+                        </span>
+
+                    </div>
+
+                    <div class="control-guide-info">
+
+                        <strong>
+                            Centrera
+                        </strong>
+
+                        <span>
+                            Centrerar markerat objekt och återgår till 100 %.
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- RADERA -->
+
+                <div class="control-guide-card">
+
+                    <div class="control-guide-visual">
+                        <kbd>Backspace</kbd>
+                    </div>
+
+                    <div class="control-guide-info">
+                        <strong>Radera</strong>
+                        <span>Radera markerat objekt.</span>
+                    </div>
+
+                </div>
+
+
+                <!-- ÅNGRA -->
+
+                <div class="control-guide-card">
+
+                    <div class="control-guide-visual">
+
+                        <kbd>Ctrl</kbd>
+
+                        <span class="control-plus">
+                            +
+                        </span>
+
+                        <kbd>Z</kbd>
+
+                    </div>
+
+                    <div class="control-guide-info">
+                        <strong>Ångra</strong>
+                        <span>Ångra senaste ändringen.</span>
+                    </div>
+
+                </div>
+
+
+                <!-- SPARA -->
+
+                <div class="control-guide-card">
+
+                    <div class="control-guide-visual">
+
+                        <span class="control-button">
+                            Spara
+                        </span>
+
+                    </div>
+
+                    <div class="control-guide-info">
+                        <strong>Spara</strong>
+                        <span>Spara projektet.</span>
+                    </div>
+
+                </div>
+
+
+                <!-- LADDA -->
+
+                <div class="control-guide-card">
+
+                    <div class="control-guide-visual">
+
+                        <span class="control-button">
+                            Ladda
+                        </span>
+
+                    </div>
+
+                    <div class="control-guide-info">
+                        <strong>Ladda</strong>
+                        <span>Öppna ett sparat projekt.</span>
+                    </div>
+
+                </div>
+
+
+                <!-- RENSA -->
+
+                <div class="control-guide-card">
+
+                    <div class="control-guide-visual">
+
+                        <span class="control-button">
+                            Rensa
+                        </span>
+
+                    </div>
+
+                    <div class="control-guide-info">
+                        <strong>Rensa</strong>
+                        <span>Börja om med en tom sekvens.</span>
+                    </div>
+
+                </div>
+
+
+                <!-- EXPORTERA -->
+
+                <div class="control-guide-card">
+
+                    <div class="control-guide-visual">
+
+                        <span class="control-button">
+                            Exportera bild
+                        </span>
+
+                    </div>
+
+                    <div class="control-guide-info">
+                        <strong>Exportera</strong>
+                        <span>Spara sekvensen som PNG.</span>
+                    </div>
+
+                </div>
+
+
+                <!-- LADDER -->
+
+                <div class="control-guide-card">
+
+                    <div class="control-guide-visual">
+
+                        <span class="control-button">
+                            Ladder
+                        </span>
+
+                    </div>
+
+                    <div class="control-guide-info">
+
+                        <strong>
+                            Ladder
+                        </strong>
+
+                        <span>
+                            Öppna den genererade Ladderkoden.
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="controls-guide-tip">
+
+                <strong>
+                    Tips:
+                </strong>
+
+                Den markerade byggpunkten bestämmer var nästa objekt skapas.
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+</div>
+        <!-- FOOTER -->
+
+        <div class="instructions-footer">
+
+            <strong>
+                ECAT
+            </strong>
+
+            <span>
+                Edgar Computing &amp; Automation Technology
+            </span>
+
+        </div>
+
+    </div>
+
+</div>
+<!-- ===================================================
+     JAVASCRIPT
+=================================================== -->
+
+<script src="script.js"></script>
+
+</body>
+
+</html>
